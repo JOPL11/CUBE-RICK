@@ -5,7 +5,7 @@ const AntiWPSplash = () => {
   const [visible, setVisible] = useState(true);
 
   useEffect(() => {
-    const timer = setTimeout(() => setVisible(false), 1500); // Disappears after 1.5s
+    const timer = setTimeout(() => setVisible(false), 6000); // Disappears after 2.5s
     return () => clearTimeout(timer);
   }, []);
 
@@ -26,7 +26,8 @@ const AntiWPSplash = () => {
       zIndex: 9999,
       fontFamily: 'sans-serif',
       fontSize: 'clamp(12px, 2vw, 16px)',
-      animation: 'fadeOut 0.5s ease-out 1s forwards'
+      animation: 'fadeOut 2.5s ease-out 2s forwards',
+      pointerEvents: 'none' 
     }}>
       <p>No WordPress users were harmed in the making of this website.</p>
       <style jsx>{`

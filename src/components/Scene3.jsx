@@ -1,16 +1,20 @@
 'use client' // Must be first line
 
-import { useState, useEffect, useRef, Suspense } from 'react'
+import { useState, useEffect, useRef, Suspense, useMemo } from 'react'
 import { Canvas, useLoader } from '@react-three/fiber'
 import { Environment, OrbitControls, Loader, ContactShadows, Float } from '@react-three/drei'
 import { TextureLoader, CircleGeometry, MeshStandardMaterial, Mesh } from 'three'
+import { Physics, useBox, useSphere } from '@react-three/cannon'
 import Cube from './Cube'
-import AntiWPSplash from './AntiWPSplash';
-import { gsap } from 'gsap'
-import CameraAnimation from './CameraAnimation'
-
-
-
+import AntiWPSplash from './AntiWPSplash'
+import PhysicsWorld from './PhysicsWorld'
+import { DecorativeCubes, CollidableCube } from './CollidableCube';
+import RedDot from './RedDot'
+import { useThree } from '@react-three/fiber';
+import gsap from 'gsap';
+import { useGSAP } from '@gsap/react';
+import * as THREE from 'three';
+import { GameProvider, useGame } from './GameContext';
 
 const CUBE_SIZE = 2 // Size of each cube
 const CUBE_SPACING = 2.1 // Space between cube centers (almost touching)
@@ -19,9 +23,10 @@ const MOBILE_BREAKPOINT = 768 // Width in pixels for mobile/desktop breakpoint
 const MOBILE_HORIZONTAL_SPACING = 1.05 // Adjusted horizontal spacing for mobile
 
 const initialCubeTexts = [
-  { topLeftText: "LEGACY SITE", bottomRightText: "OPENS IN A NEW TAB", description: "Currently migrating to this new Next.js + React 3 Fiber format - until its done, you can check out the old html5 site.", externalUrl: "https://www.jopl.de/2/index2.html" },
+  { topLeftText: "LEGACY SITE", bottomRightText: "OPENS IN A NEW TAB", description: "Currently migrating to a new Next.js + React Three Fiber format - until its done, you can check out the old html5 site.", externalUrl: "https://www.jopl.de/2/index2.html" },
   { topLeftText: "VISUALIZATION", bottomRightText: "OPENS IN A NEW TAB", description: `WARNING: This link leads to an experimental playground.
     A collection of personal experiments showcasing:
+
     - 3D modeling/rendering
     - Post-production VFX
     - Free-jazz inspired motion design
@@ -60,16 +65,14 @@ Zum Thema Deutsche Sprache: Ich kommuniziere direkt und unverschluesselt - so, w
     I do Motion; From visual & motion concept to 2D / 3D asset-creation to screen-design to render, edit & post-production. 
     
     Opens in a new window.`, videoUrl: "https://www.jopl.de/2/video/reel.mp4"  },
-  { topLeftText: `CINEMA4D /
-GO SOFT`, bottomRightText: "MOTION REEL SHORT", description: `Showreel showing pure 3D Motion-design.
+  { topLeftText: "CINEMA4D", bottomRightText: "MOTION REEL SHORT", description: `Showreel showing pure 3D Motion-design.
 
     - Corporate Logos showcase the companies the scenes were made for.
     - A short but sweet description of the project was added for many projects. 
 
     For the corporately obsessed.
     Opens in a new window.`, videoUrl: "https://www.jopl.de/2/new/Reel2025_A.mp4#t=0,loop"    },
-  { topLeftText: `ANIMATION /
-GO HARD`, bottomRightText: "MOTION REEL LONG", description: `Showreel showing 3D Motion-design, 2D Motion Design, 2D Text animation,  2D Character Animation in 3D Environments, IK Animation, basically the full sandwich, almost. 
+  { topLeftText: "ANIMATION", bottomRightText: "MOTION REEL LONG", description: `Showreel showing 3D Motion-design, 2D Motion Design, 2D Text animation,  2D Character Animation in 3D Environments, IK Animation, basically the full sandwich, almost. 
 
     - Corporate Logos showcase the companies the scenes were made for.
     - Basically a motion smorgasbord of skills used for real projects. 
@@ -90,25 +93,7 @@ GO HARD`, bottomRightText: "MOTION REEL LONG", description: `Showreel showing 3D
   { topLeftText: "FOOTER", bottomRightText: "IMPRESSUM", description: "", externalUrl: "https://www.jopl.de/2/impressum.html"   },
 ]
 
-function DecorativeCubes() {
-  const numCubes = 20
-  const positions = Array.from({ length: numCubes }, () => {
-    // Generate position with exclusion zone
-    let x, z
-    do {
-      x = (Math.random() - 0.5) * 15
-      z = (Math.random() - 0.5) * 15
-    } while (
-      // Exclude the area around the main cubes (approximately -4 to 4 in x and z)
-      (Math.abs(x) < 4 && Math.abs(z) < 4)
-    )
 
-    return {
-      x,
-      y: 0.01, // ADJUST THIS VALUE TO CHANGE CUBE HEIGHT: lower number = closer to ground
-      z
-    }
-  })
 
   const sanitizeText = (text) => {
     // Replace problematic characters if needed
@@ -117,24 +102,7 @@ function DecorativeCubes() {
       .replace(/\n/g, '\\n'); // Preserve line breaks if needed
   };
 
-  return (
-    <>
-      {positions.map((pos, i) => (
-        <Float 
-          key={i}
-          speed={1 + Math.random() * 2}
-          rotationIntensity={0.2}
-          floatIntensity={0.1}
-        >
-          <mesh position={[pos.x, pos.y, pos.z]}>
-            <boxGeometry args={[0.3, 0.3, 0.3]} />
-            <meshStandardMaterial color={i % 2 === 0 ? "white" : "#1a1a1a"} />
-          </mesh>
-        </Float>
-      ))}
-    </>
-  )
-}
+  
 
 // Add this above your component
 const LinkIcon = () => (
@@ -146,7 +114,7 @@ const LinkIcon = () => (
 
 function SceneContent({ onCubeSelect }) {
   const [isMobile, setIsMobile] = useState(false)
-  
+  const controlsRef = useRef()
   const logoTexture = useLoader(TextureLoader, '/images/logo.png')
 
   useEffect(() => {
@@ -165,12 +133,11 @@ function SceneContent({ onCubeSelect }) {
 
   const renderCubes = () => {
     if (isMobile) {
-      const Z_OFFSET = -3.0;
       // Mobile layout: 2 cubes per row with equidistant horizontal spacing
       return (
         <>
           {/* First row */}
-          <group position={[-MOBILE_HORIZONTAL_SPACING, CUBE_Y_POSITION, -CUBE_SPACING + Z_OFFSET]}>
+          <group position={[-MOBILE_HORIZONTAL_SPACING, CUBE_Y_POSITION, -CUBE_SPACING]}>
             <Float speed={1.5} rotationIntensity={0.2} floatIntensity={0.1}>
               <Cube 
                 topLeftText={initialCubeTexts[0].topLeftText}
@@ -180,7 +147,7 @@ function SceneContent({ onCubeSelect }) {
               />
             </Float>
           </group>
-          <group position={[MOBILE_HORIZONTAL_SPACING, CUBE_Y_POSITION, -CUBE_SPACING + Z_OFFSET]}>
+          <group position={[MOBILE_HORIZONTAL_SPACING, CUBE_Y_POSITION, -CUBE_SPACING]}>
             <Float speed={1.5} rotationIntensity={0.2} floatIntensity={0.1}>
               <Cube 
                 topLeftText={initialCubeTexts[1].topLeftText}
@@ -192,7 +159,7 @@ function SceneContent({ onCubeSelect }) {
           </group>
 
           {/* Second row */}
-          <group position={[-MOBILE_HORIZONTAL_SPACING, CUBE_Y_POSITION, 0  + Z_OFFSET]}>
+          <group position={[-MOBILE_HORIZONTAL_SPACING, CUBE_Y_POSITION, 0]}>
             <Float speed={1.5} rotationIntensity={0.2} floatIntensity={0.1}>
               <Cube 
                 topLeftText={initialCubeTexts[2].topLeftText}
@@ -202,7 +169,7 @@ function SceneContent({ onCubeSelect }) {
               />
             </Float>
           </group>
-          <group position={[MOBILE_HORIZONTAL_SPACING, CUBE_Y_POSITION, 0 + Z_OFFSET]}>
+          <group position={[MOBILE_HORIZONTAL_SPACING, CUBE_Y_POSITION, 0]}>
             <Float speed={1.5} rotationIntensity={0.2} floatIntensity={0.1}>
               <Cube 
                 topLeftText={initialCubeTexts[3].topLeftText}
@@ -214,7 +181,7 @@ function SceneContent({ onCubeSelect }) {
           </group>
 
           {/* Third row */}
-          <group position={[-MOBILE_HORIZONTAL_SPACING, CUBE_Y_POSITION, CUBE_SPACING + Z_OFFSET]}>
+          <group position={[-MOBILE_HORIZONTAL_SPACING, CUBE_Y_POSITION, CUBE_SPACING]}>
             <Float speed={1.5} rotationIntensity={0.2} floatIntensity={0.1}>
               <Cube 
                 topLeftText={initialCubeTexts[4].topLeftText}
@@ -225,7 +192,7 @@ function SceneContent({ onCubeSelect }) {
               />
             </Float>
           </group>
-          <group position={[MOBILE_HORIZONTAL_SPACING, CUBE_Y_POSITION, CUBE_SPACING + Z_OFFSET]}>
+          <group position={[MOBILE_HORIZONTAL_SPACING, CUBE_Y_POSITION, CUBE_SPACING]}>
             <Float speed={1.5} rotationIntensity={0.2} floatIntensity={0.1}>
               <Cube 
                 topLeftText={initialCubeTexts[5].topLeftText}
@@ -237,7 +204,7 @@ function SceneContent({ onCubeSelect }) {
           </group>
 
           {/* Fourth row */}
-          <group position={[-MOBILE_HORIZONTAL_SPACING, CUBE_Y_POSITION, CUBE_SPACING * 2 + Z_OFFSET]}>
+          <group position={[-MOBILE_HORIZONTAL_SPACING, CUBE_Y_POSITION, CUBE_SPACING * 2]}>
             <Float speed={1.5} rotationIntensity={0.2} floatIntensity={0.1}>
               <Cube 
                 topLeftText={initialCubeTexts[6].topLeftText}
@@ -247,7 +214,7 @@ function SceneContent({ onCubeSelect }) {
               />
             </Float>
           </group>
-          <group position={[MOBILE_HORIZONTAL_SPACING, CUBE_Y_POSITION, CUBE_SPACING * 2 + Z_OFFSET]}>
+          <group position={[MOBILE_HORIZONTAL_SPACING, CUBE_Y_POSITION, CUBE_SPACING * 2]}>
             <Float speed={1.5} rotationIntensity={0.2} floatIntensity={0.1}>
               <Cube 
                 topLeftText={initialCubeTexts[7].topLeftText}
@@ -259,7 +226,7 @@ function SceneContent({ onCubeSelect }) {
           </group>
 
           {/* Fifth row (single cube) */}
-          <group position={[0, CUBE_Y_POSITION, CUBE_SPACING * 3 + Z_OFFSET]}>
+          <group position={[0, CUBE_Y_POSITION, CUBE_SPACING * 3]}>
             <Float speed={1.5} rotationIntensity={0.2} floatIntensity={0.1}>
               <Cube 
                 topLeftText={initialCubeTexts[8].topLeftText}
@@ -381,10 +348,22 @@ function SceneContent({ onCubeSelect }) {
       <ambientLight intensity={0.5} />
       <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} />
       <pointLight position={[-10, -10, -10]} />
-    
+      <Environment 
+        files="/images/kloppenheim_02_puresky_1k.hdr"
+        background={false}
+
+      />
+      <OrbitControls 
+        ref={controlsRef}
+        enableZoom={true}
+        minPolarAngle={0}
+        maxPolarAngle={Math.PI}
+        minDistance={3}
+        maxDistance={14}
+      />
       
       {renderCubes()}
-      <DecorativeCubes />
+     
 
       <ContactShadows
         position={[0, -2, 0]}
@@ -400,12 +379,69 @@ function SceneContent({ onCubeSelect }) {
     </>
   )
 }
+function CameraRig({ mode, redDotPosition }) {
+    const { camera } = useThree();
+    const { setGameMode } = useGame();
+  
+    // Positions
+    const portfolioPos = useMemo(() => new THREE.Vector3(-5, 5, 5), []);
+    const cockpitPos = useRef(new THREE.Vector3());
+  
+    // Update cockpit position based on red dot
+    useEffect(() => {
+      if (redDotPosition) {
+        cockpitPos.current.copy(redDotPosition);
+        // Move slightly in front of the dot
+        cockpitPos.current.z -= 0.5; 
+      }
+    }, [redDotPosition]);
+  
+    useGSAP(() => {
+      if (mode === 'transition') {
+        gsap.to(camera.position, {
+          x: cockpitPos.current.x,
+          y: cockpitPos.current.y,
+          z: cockpitPos.current.z,
+          duration: 2,
+          ease: "power2.inOut",
+          onComplete: () => setGameMode('cockpit')
+        });
+        camera.lookAt(redDotPosition || new THREE.Vector3());
+      } else if (mode === 'portfolio') {
+        gsap.to(camera.position, {
+          x: portfolioPos.x,
+          y: portfolioPos.y,
+          z: portfolioPos.z,
+          duration: 2,
+          ease: "power2.inOut"
+        });
+      }
+    }, [mode, redDotPosition]);
+    
+    return null;
+  }
 
-export default function Scene() {
+
+  function MainScene() {
   const [selectedCube, setSelectedCube] = useState(null)
   const [cubeTexts, setCubeTexts] = useState(initialCubeTexts)
   const canvasRef = useRef()
-  const controlsRef = useRef()
+  const [gameMode, setGameMode] = useState('portfolio'); // 'portfolio' | 'transition' | 'cockpit'
+  const [redDotPosition, setRedDotPosition] = useState(null);
+
+  const handleRedDotClick = (position) => {
+    console.log("Initiate transition to cockpit!")
+    setRedDotPosition(position);
+    setGameMode('transition');
+    // Play sound effect
+ // const audio = new Audio('/sounds/transition.mp3');
+  //audio.volume = 0.5;
+  //audio.play();
+  
+  // Complete transition after camera animation
+  //setTimeout(() => setGameMode('cockpit'), 2000);
+  };
+
 
   const handleCubeSelect = (index) => {
     setSelectedCube(index)
@@ -427,8 +463,9 @@ export default function Scene() {
   }
 
   return (
+ 
     <div style={{ position: 'relative', width: '100%', height: '100%' }}>
-       <AntiWPSplash />
+      <AntiWPSplash />
       <Canvas
         ref={canvasRef}
         gl={{ 
@@ -438,7 +475,7 @@ export default function Scene() {
           depth: true
         }}
         camera={{
-          position: [0, 11, 0],
+          position: [-5, 5, 5],
           fov: 50,
           near: 0.1,
           far: 1000
@@ -448,23 +485,27 @@ export default function Scene() {
           gl.setClearColor('#d3d3d3')
         }}
       >
+        <CameraRig mode={gameMode} />
+        
+        {gameMode !== 'cockpit' && (
+          <>
+            <PhysicsWorld>
+              <CollidableCube position={[-4, 1, 0]} />
+              <CollidableCube position={[5, 1, 2]} />
+              <DecorativeCubes />
+              <RedDot onClick={handleRedDotClick} />
+            </PhysicsWorld>
+            <Suspense fallback={null}>
+              <SceneContent onCubeSelect={handleCubeSelect} />
+            </Suspense>
        
-        <Suspense fallback={null}>
-        <Environment 
-        files="/images/kloppenheim_02_puresky_1k.hdr"
-        background={false}/>
-
-        <CameraAnimation controlsRef={controlsRef} />
-        <OrbitControls 
-        ref={controlsRef}
-        enableZoom={true}
-        minPolarAngle={0}
-        maxPolarAngle={Math.PI}
-        minDistance={3}
-        maxDistance={14}
-      />
-          <SceneContent onCubeSelect={handleCubeSelect} />
-        </Suspense>
+          </>
+         
+        )}
+  
+        {gameMode === 'cockpit' && (
+          <CockpitView onExit={() => setGameMode('portfolio')} />
+        )}
       </Canvas>
       <Loader />
       
@@ -474,31 +515,26 @@ export default function Scene() {
     position: 'absolute',
     top: '20px',
     right: '20px',
-    background: '#15171c',
+    background: '#2a2a2a',
     padding: '20px',
-    borderRadius: '2px',
+    borderRadius: '8px',
     boxShadow: '0 2px 10px rgba(0,0,0,0.8)',
     zIndex: 1000,
     color: '#e0e0e0',
     width: '350px',
     maxHeight: '80vh',
     display: 'flex',
-    fontFamily: 'InterDisplay-ExtraLight, sans-serif',
     flexDirection: 'column'
   }}>
     {/* Header */}
-    <div style={{
-    marginBottom: '15px',
-    fontFamily: 'InterDisplay-Bold, sans-serif' // Bold version for headers
-  }}>
-    <div style={{ fontSize: '1.2em' }}>
-      {cubeTexts[selectedCube].topLeftText}
+    <div style={{ marginBottom: '15px' }}>
+      <div style={{ fontSize: '1.2em', fontWeight: 'bold' }}>
+        {cubeTexts[selectedCube].topLeftText}
+      </div>
+      <div style={{ fontSize: '0.9em', color: '#aaa' }}>
+        {cubeTexts[selectedCube].bottomRightText}
+      </div>
     </div>
-    <div style={{ fontSize: '0.9em', color: '#aaa' }}>
-      {cubeTexts[selectedCube].bottomRightText}
-    </div>
-  </div>
-
 
     {/* Text content with perfect paragraph handling */}
     <div style={{
@@ -508,8 +544,7 @@ export default function Scene() {
       // These next 3 lines are the magic combo:
       whiteSpace: 'pre-line',
       wordWrap: 'break-word',
-      overflowWrap: 'break-word',
-      fontFamily: 'InterDisplay-ExtraLight, sans-serif'
+      overflowWrap: 'break-word'
     }}>
       {cubeTexts[selectedCube].description.split('\n\n').map((paragraph, i) => (
         <p key={i} style={{ 
@@ -582,7 +617,16 @@ export default function Scene() {
       Close
     </button>
   </div>
+  
 )}
     </div>
   )
 }
+// This becomes your default export wrapper
+export default function Scene() {
+    return (
+      <GameProvider>
+        <MainScene />
+      </GameProvider>
+    );
+  }

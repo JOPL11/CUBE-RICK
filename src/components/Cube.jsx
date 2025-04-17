@@ -70,7 +70,7 @@ export default function Cube({ topLeftText = "TRUST THE FLOW", bottomRightText =
         position={[-0.8, 1.02, -0.8]} // Top left corner of the cube's top face
         rotation={[-Math.PI/2, 0, 0]} // Rotated to lie flat
         fontSize={0.15}
-        color={color === "white" ? "#3d3d3d" : "white"}
+        color={color === "white" ? "#15171b" : "white"}
         maxWidth={1.5}
         lineHeight={1.2}
         font={myFont2}
@@ -86,7 +86,7 @@ export default function Cube({ topLeftText = "TRUST THE FLOW", bottomRightText =
         position={[0.8, 1.02, 0.8]} // Bottom right corner of the cube's top face
         rotation={[-Math.PI/2, 0, 0]} // Rotated to lie flat
         fontSize={0.09}
-        color={color === "white" ? "#3d3d3d" : "white"}
+        color={color === "white" ? "#15171b" : "white"}
         maxWidth={1.5}
         lineHeight={1.2}
         font={myFont}
