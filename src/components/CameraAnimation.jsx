@@ -24,7 +24,7 @@ export default function CameraAnimation({ controlsRef }) {
         height: 8, // Target height
         duration: 6,
         ease: "sine.inOut",
-        delay: 1.5,
+        delay: 0,
         onUpdate: function() {
           const radius = 8
           const angle = this.targets()[0].angle

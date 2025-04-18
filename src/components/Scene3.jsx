@@ -15,6 +15,7 @@ import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import * as THREE from 'three';
 import { GameProvider, useGame } from './GameContext';
+import CameraAnimation from './CameraAnimation'
 
 const CUBE_SIZE = 2 // Size of each cube
 const CUBE_SPACING = 2.1 // Space between cube centers (almost touching)
@@ -428,6 +429,7 @@ function CameraRig({ mode, redDotPosition }) {
   const canvasRef = useRef()
   const [gameMode, setGameMode] = useState('portfolio'); // 'portfolio' | 'transition' | 'cockpit'
   const [redDotPosition, setRedDotPosition] = useState(null);
+  const controlsRef = useRef()
 
   const handleRedDotClick = (position) => {
     console.log("Initiate transition to cockpit!")
@@ -496,19 +498,16 @@ function CameraRig({ mode, redDotPosition }) {
               <RedDot onClick={handleRedDotClick} />
             </PhysicsWorld>
             <Suspense fallback={null}>
+               <CameraAnimation controlsRef={controlsRef} />
               <SceneContent onCubeSelect={handleCubeSelect} />
-            </Suspense>
-       
+            </Suspense>       
           </>
-         
         )}
-  
         {gameMode === 'cockpit' && (
           <CockpitView onExit={() => setGameMode('portfolio')} />
         )}
       </Canvas>
       <Loader />
-      
       {/* Editor UI */}
       {selectedCube !== null && (
   <div style={{

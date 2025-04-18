@@ -8,6 +8,7 @@ import Cube from './Cube'
 import AntiWPSplash from './AntiWPSplash';
 import { gsap } from 'gsap'
 import CameraAnimation from './CameraAnimation'
+import RedDot from './RedDot'
 
 
 
@@ -22,7 +23,6 @@ const initialCubeTexts = [
   { topLeftText: "LEGACY SITE", bottomRightText: "OPENS IN A NEW TAB", description: "Currently migrating to this new Next.js + React 3 Fiber format - until its done, you can check out the old html5 site.", externalUrl: "https://www.jopl.de/2/index2.html" },
   { topLeftText: "VISUALIZATION", bottomRightText: "OPENS IN A NEW TAB", description: `WARNING: This link leads to an experimental playground.
     A collection of personal experiments showcasing:
-
     - 3D modeling/rendering
     - Post-production VFX
     - Free-jazz inspired motion design
@@ -43,11 +43,11 @@ Design skills include Layout, Screen-Design, Print, Illustration, Painting, Conc
 
 Motion skills include 3D Modeling, 2D/3D Animation, Cinema4D, Blender. Premiere, After Effects, Expressions, Stardust, Plexus, VideoCopilot, Red Giant, Duik Tools, IK, FK, Lottie, Bodymovin, Audio, Colorgrading, Compositing. Render Engines: Octane, Redshift, Corona, Media Encoder, Handbrake and a ton of related peripheral stuff that, I mean we're gonna be here all day if I have to mention everything. Let's not get ludicrous. Some guy: "Do you do Advanced Lighting?" Me: "Yes, I do Advanced Lighting." I do Motion; From visual & motion concept to 2D / 3D asset-creation to screen-design to render, edit & post-production.
 
-Code skills include Next.js, Three.js, React 3 Fiber (for Germans: that's WebGL with a React base), WebXR, AFrame, GSAP, javascript, html5, css, Vite, npm, yarn.
+Code skills include Next.js, Three.js, React Three Fiber, WebXR, AFrame, GSAP, javascript, html5, css, Vite, npm, yarn.
 
 AI Skills include Stable Diffusion with custom workflows via ComfyUI, LoRAs and leveraging LLM's to achieve my goals, not the other way around.
 
-Spoken languages are English, German, Spanish and French. Canada / EU dual citizen.
+Spoken languages are English, German, Spanish and French. Canadian / Spanish dual citizen.
 
 Zum Thema Deutsche Sprache: Ich kommuniziere direkt und unverschluesselt - so, wie es im Duden steht, nicht wie im Wirtschaftsprotokoll. ` },
   { topLeftText: "AFTER EFFECTS", bottomRightText: "2D / 3D MOTION DESIGN", description: `Motion skills include 3D Modeling, 2D/3D Animation, Cinema4D, Blender. 
@@ -68,7 +68,6 @@ GO SOFT`, bottomRightText: "MOTION REEL SHORT", description: `Showreel showing p
     - A short but sweet description of the project was added for many projects. 
 
     For the corporately obsessed.
-    
     Opens in a new window.`, videoUrl: "https://www.jopl.de/2/new/Reel2025_A.mp4#t=0,loop"    },
   { topLeftText: `ANIMATION /
 GO HARD`, bottomRightText: "MOTION REEL LONG", description: `Showreel showing 3D Motion-design, 2D Motion Design, 2D Text animation,  2D Character Animation in 3D Environments, IK Animation, basically the full sandwich, almost. 
@@ -76,19 +75,17 @@ GO HARD`, bottomRightText: "MOTION REEL LONG", description: `Showreel showing 3D
     - Corporate Logos showcase the companies the scenes were made for.
     - Basically a motion smorgasbord of skills used for real projects. 
 
-    For the corporately obsessed and fans of the eyeball. 
-
+    For the corporately obsessed and fans of the trade. 
     Opens in a new window.`, videoUrl: "https://www.jopl.de/2/video/reel.mp4#t=0,loop"  },
-  { topLeftText: `WEBGL / WEBXR /
-R3F / AR / VR / 3.JS`, bottomRightText: "INTERACTIVE", description: `WARNING: This link leads to an experimental playground.
+  { topLeftText: "REACT 3 FIBER", bottomRightText: "INTERACTIVE", description: `WARNING: This link leads to an experimental playground.
 
     A collection of personal experiments showcasing:
 
     - Interactive 3D WebGL Experiments
     - WebXR Experiments for use in the Quest3S headset.(Which is awesome by the way.)
     
-    Pure creative play - no commercial constraints. Not for the corporately obsessed.
-
+    Pure creative play - no commercial constraints.
+    Not for the corporately obsessed.
     Opens in a new window.`, externalUrl: "https://www.jopl.de/2/experiments.html" },
   { topLeftText: "NEXT.JS", bottomRightText: "COMING SOON", description: "" },
   { topLeftText: "FOOTER", bottomRightText: "IMPRESSUM", description: "", externalUrl: "https://www.jopl.de/2/impressum.html"   },
@@ -410,6 +407,20 @@ export default function Scene() {
   const [cubeTexts, setCubeTexts] = useState(initialCubeTexts)
   const canvasRef = useRef()
   const controlsRef = useRef()
+  const [redDotPosition, setRedDotPosition] = useState(null);
+
+  const handleRedDotClick = (position) => {
+    console.log("Initiate transition to cockpit!")
+    setRedDotPosition(position);
+    setGameMode('transition');
+    // Play sound effect
+ // const audio = new Audio('/sounds/transition.mp3');
+  //audio.volume = 0.5;
+  //audio.play();
+  
+  // Complete transition after camera animation
+  //setTimeout(() => setGameMode('cockpit'), 2000);
+  };
 
   const handleCubeSelect = (index) => {
     setSelectedCube(index)
@@ -457,7 +468,9 @@ export default function Scene() {
         <Environment 
         files="/images/kloppenheim_02_puresky_1k.hdr"
         background={false}/>
+      
       <DecorativeCubes />
+      <RedDot onClick={handleRedDotClick} />
         <CameraAnimation controlsRef={controlsRef} />
         <OrbitControls 
         ref={controlsRef}

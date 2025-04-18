@@ -1,8 +1,9 @@
+
 'use client'
 
 import dynamic from 'next/dynamic'
 
-const Scene = dynamic(() => import('@/components/Scene2').then(mod => mod.default), {
+const Scene = dynamic(() => import('@/components/Scene5').then(mod => mod.default), {
   ssr: false,
   loading: () => (
     <div style={{ 
@@ -21,9 +22,7 @@ const Scene = dynamic(() => import('@/components/Scene2').then(mod => mod.defaul
 export default function Home() {
   return (
     <main style={{ width: '100vw', height: '100vh' }}>
- 
-  <Scene />
-
+      <Scene />
     </main>
   )
 }

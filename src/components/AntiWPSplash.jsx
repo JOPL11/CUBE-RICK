@@ -24,12 +24,12 @@ const AntiWPSplash = () => {
       alignItems: 'center',
       justifyContent: 'center',
       zIndex: 9999,
-      fontFamily: 'sans-serif',
+      fontFamily: 'InterDisplay-Bold, sans-serif',
       fontSize: 'clamp(12px, 2vw, 16px)',
       animation: 'fadeOut 2.5s ease-out 2s forwards',
       pointerEvents: 'none' 
     }}>
-      <p>No WordPress users were harmed in the making of this website.</p>
+      <p>Version 4.0</p>
       <style jsx>{`
         @keyframes fadeOut {
           to { opacity: 0; }
