@@ -1,6 +1,6 @@
 export const theme = {
   light: {
-    decorativeCubes: '#f57500',
+    decorativeCubes: '#ffffff',
     sceneBackground: '#d3d3d3',
     ambientIntensity: 0.5,
     spotIntensity: 1,

@@ -1,0 +1,38 @@
+CAMERA CONFIGURATION SUMMARY
+
+Key Findings:
+1. Optimal Settings:
+   - Y Position: 250
+   - FOV: 38
+   - Near/Far: 0.1/1000
+
+2. Identified Issues:
+   - CameraAnimation.jsx was overriding Y positions
+   - Debug logging caused performance lag
+   - Multiple position-setting conflicts
+
+Recommended Fixes:
+
+// In Scene5.jsx
+<Canvas
+  camera={{
+    position: [0, 250, 0], // Hardcoded for stability
+    fov: 38,
+    near: 0.1,
+    far: 1000
+  }}
+  onCreated={({ camera }) => camera.lookAt(0, 0, 0)}
+>
+
+// In CameraAnimation.jsx
+// Replace any position overrides with:
+camera.position.y = 250; // Use configured value
+
+Next Steps:
+1. Start with basic camera config
+2. Add features back one at a time
+3. Use minimal debug logging
+4. Check for position overrides in:
+   - CameraAnimation.jsx
+   - CameraController.jsx
+   - Any parent components

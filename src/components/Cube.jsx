@@ -3,9 +3,13 @@ import { useRef, useState, useEffect } from 'react'
 import { Text, RoundedBox } from '@react-three/drei'
 import { gsap } from 'gsap'
 import { useThree, useFrame } from '@react-three/fiber'
-import myFont2 from '/public/fonts/InterDisplay-Bold.ttf';
-import myFont from '/public/fonts/InterDisplay-Regular.ttf';
+import { useLoader } from '@react-three/fiber';
+import { FontLoader } from 'three/examples/jsm/loaders/FontLoader';
+
+//import myFont from '/public/fonts/';
 import * as THREE from 'three'
+
+
 
 // Cube dimensions
 const CUBE_SIZE_X = 2;
@@ -25,6 +29,10 @@ export default function Cube({ position = [0, 0.88, 0],
   const meshRef = useRef()
   const { camera } = useThree()
   const textGroupRef = useRef() // For controlling both text elements
+
+
+
+
 
   // Decide color internally if not provided
   const effectiveColor = color || getCubeColor(cubeIndex);
@@ -91,6 +99,11 @@ export default function Cube({ position = [0, 0.88, 0],
 
   // Offset to float text just above the cube
   const TEXT_Y_OFFSET = 0.02;
+  
+ // Use direct public paths (no import needed)
+const myFont2 = '/fonts/InterDisplay-Bold.ttf';
+const myFont = '/fonts/InterDisplay-Regular.ttf';
+
 
   return (
     <group 
@@ -131,6 +144,7 @@ export default function Cube({ position = [0, 0.88, 0],
           material-depthWrite={true}
           material-depthTest={true}
           material-side={0}
+          characters="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()-_=+[]{}|;:',.<>/?äöüßÄÖÜ" /* Force include Umlauts */
         >
           {topLeftText}
         </Text>
@@ -149,6 +163,7 @@ export default function Cube({ position = [0, 0.88, 0],
           material-depthWrite={true}
           material-depthTest={true}
           material-side={0}
+          characters="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()-_=+[]{}|;:',.<>/?äöüßÄÖÜ" /* Force include Umlauts */
         >
           {bottomRightText}
         </Text>

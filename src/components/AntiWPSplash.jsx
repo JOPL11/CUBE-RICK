@@ -9,6 +9,10 @@ const AntiWPSplash = () => {
     return () => clearTimeout(timer);
   }, []);
 
+  useEffect(() => {
+    console.log('Font available?', document.fonts.check('1em InterDisplay-Bold'));
+  }, []);
+
   if (!visible) return null;
 
   return (
@@ -29,7 +33,7 @@ const AntiWPSplash = () => {
       animation: 'fadeOut 2.5s ease-out 2s forwards',
       pointerEvents: 'none' 
     }}>
-      <p>Version 4.0</p>
+      <p>Version 4.5</p>
       <style jsx>{`
         @keyframes fadeOut {
           to { opacity: 0; }

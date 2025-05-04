@@ -7,7 +7,8 @@ import { TextureLoader } from 'three'
 import Cube from './Cube'
 import WideCube from './WideCube';
 import Lightbox from './Lightbox';
-
+//import myFont2 from '/public/static/fonts/InterDisplay-Bold.ttf';
+//import myFont from '/public/static/fonts/InterDisplay-Regular.ttf';
 
 const CUBE_SIZE = 2 // Size of each cube
 const CUBE_SPACING = 2.1 // Space between cube centers (almost touching)

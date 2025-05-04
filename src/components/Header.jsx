@@ -2,24 +2,45 @@
 
 import { createContext, useState } from 'react';
 import { theme } from '../config/theme';
+import { Html } from '@react-three/drei'
 
 export const ThemeContext = createContext();
 
-export default function Header({ darkMode, setDarkMode }) {
+export default function Header({ darkMode, setDarkMode, fogEnabled, setFogEnabled }) {
   const [isOpen, setIsOpen] = useState(false);
   const [isThirdOpen, setIsThirdOpen] = useState(false);
 
   return (
+
     <ThemeContext.Provider value={darkMode ? theme.dark : theme.light}>
       <div style={{
         position: 'fixed',
-        bottom: '140px',  
+        bottom: '40px',  
         left: '20px',
         zIndex: 1000,
         display: 'flex',
         flexDirection: 'column',
         gap: '10px'
       }}>
+        {/* Fog Toggle Button 
+        <button 
+          onClick={() => setFogEnabled(!fogEnabled)}
+          style={{
+            background: 'rgba(0,0,0,0.7)',
+            color: 'white',
+            borderRadius: '50%',
+            width: '50px',
+            height: '50px',
+            fontSize: '20px',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}
+        >
+          {fogEnabled ? 'FOG ON' : 'FOG OFF'}
+        </button>
+*/}
         {/* Lightbulb Button */}
         <button 
           onClick={() => {
@@ -40,14 +61,16 @@ export default function Header({ darkMode, setDarkMode }) {
           }}
         >
           {isThirdOpen ? (
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M12 2C8.13 2 5 5.13 5 9C5 11.38 6.19 13.47 8 14.74V17C8 17.55 8.45 18 9 18H15C15.55 18 16 17.55 16 17V14.74C17.81 13.47 19 11.38 19 9C19 5.13 15.87 2 12 2ZM14 15.5V16H10V15.5C8.61 14.43 7.5 12.85 7.5 11H16.5C16.5 12.85 15.39 14.43 14 15.5Z" fill="white"/>
-              <path d="M9 22C9 22.55 9.45 23 10 23H14C14.55 23 15 22.55 15 22V21H9V22Z" fill="white"/>
+            <svg width="44" height="44" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="12" cy="10" r="6.5" fill="white"/>
+              <rect x="9" y="16" width="6" height="5" rx="1.5" fill="#6c6c6d"/>
+              <rect x="11" y="21" width="2" height="1.2" rx="0.6" fill="#4d4d4d"/>
             </svg>
           ) : (
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M12 2C8.13 2 5 5.13 5 9C5 11.38 6.19 13.47 8 14.74V17C8 17.55 8.45 18 9 18H15C15.55 18 16 17.55 16 17V14.74C17.81 13.47 19 11.38 19 9C19 5.13 15.87 2 12 2ZM14 15.5V16H10V15.5C8.61 14.43 7.5 12.85 7.5 11H16.5C16.5 12.85 15.39 14.43 14 15.5Z" fill="#666666"/>
-              <path d="M9 22C9 22.55 9.45 23 10 23H14C14.55 23 15 22.55 15 22V21H9V22Z" fill="#666666"/>
+            <svg width="44" height="44" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="12" cy="10" r="6.5" fill="#8d8d8d"/>
+              <rect x="9" y="16" width="6" height="5" rx="1.5" fill="#6c6c6d"/>
+              <rect x="11" y="21" width="2" height="1.2" rx="0.6" fill="#4d4d4d"/>
             </svg>
           )}
         </button>
@@ -69,7 +92,7 @@ export default function Header({ darkMode, setDarkMode }) {
           }}
         >
           <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect x="2" y="5" width="20" height="14" rx="2" fill="#4d4d4d"/>
+            <rect x="2" y="5" width="20" height="14" rx="2" fill="#8d8d8d"/>
             <polygon points="2,5 12,15 22,5" fill="#6c6c6d"/>
           </svg>
         </button>
@@ -140,5 +163,6 @@ export default function Header({ darkMode, setDarkMode }) {
         </div>
       </div>
     </ThemeContext.Provider>
+
   );
 }

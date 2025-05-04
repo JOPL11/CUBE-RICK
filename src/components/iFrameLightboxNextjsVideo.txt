@@ -1,0 +1,95 @@
+   const IframeLightbox = () => (
+      <Html fullscreen style={{ zIndex: 10000 }}>
+        {/* Single container for all lightbox elements */}
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100vw',
+          height: '100vh',
+          zIndex: 10000,
+          pointerEvents: 'auto'
+        }}>
+          {/* Backdrop */}
+          <div style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            width: '100vw',
+            height: '100vh',
+            backgroundColor: 'rgba(0,0,0,0.95)',
+            zIndex: 1
+          }} />
+    
+          {/* Video container - only when URL exists */}
+          {iframeUrl && (
+            <div style={{
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              width: '90vw',
+              height: '90vh',
+              zIndex: 2,
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              backgroundColor: 'rgba(0,0,0,0.8)',
+              overflow: 'hidden',
+              boxShadow: '0 4px 20px rgba(0,0,0,0.3)'
+            }}>
+              <video
+                src={iframeUrl}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'contain',
+                  backgroundColor: '#000'
+                }}
+                controls
+                playsInline
+                muted
+                onPlay={() => setIsPlaying(true)}
+                onPause={() => setIsPlaying(false)}
+              />
+            </div>
+          )}
+    
+          {/* Close button - fixed position */}
+          <button 
+            onClick={() => setIframeUrl(null)}
+            style={{
+              position: 'absolute',
+              top: '5px',
+              right: '5px',
+              padding: '12px 20px',
+              background: '#f57500',
+              color: 'white',
+              border: 'none',
+              borderRadius: '8px',
+              cursor: 'pointer',
+              zIndex: 3
+            }}
+          >
+            CLOSE
+          </button>
+    
+          {/* Status indicator */}
+          <div style={{
+            position: 'absolute',
+            top: '20px',
+            left: '20px',
+            zIndex: 3,
+            color: 'white',
+            fontSize: '24px',
+            backgroundColor: 'rgba(0,0,0,0.5)',
+            padding: '10px',
+            borderRadius: '5px'
+          }}>
+            {isPlaying ? '▶ Playing' : '❚❚ Paused'}
+          </div>
+        </div>
+      </Html>
+    );

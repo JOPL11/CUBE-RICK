@@ -2,8 +2,8 @@
 import { useRef } from 'react'
 import { Text } from '@react-three/drei'
 import { gsap } from 'gsap'
-import myFont2 from '/public/fonts/InterDisplay-Bold.ttf';
-import myFont from '/public/fonts/InterDisplay-Regular.ttf';
+//import myFont2 from '/public/fonts/InterDisplay-Bold.ttf';
+//import myFont from '/public/fonts/InterDisplay-Regular.ttf';
 
 
 

@@ -3,13 +3,11 @@ import { useRef, useState, useEffect } from 'react'
 import { Text } from '@react-three/drei'
 import { gsap } from 'gsap'
 import { useThree, useFrame } from '@react-three/fiber'
-import myFont2 from '/public/fonts/InterDisplay-Bold.ttf';
-import myFont from '/public/fonts/InterDisplay-Regular.ttf';
 import * as THREE from 'three'
 import VideoGammaMaterial from './VideoGammaMaterial';
 
 // Offset to float text just above the cube
-const TEXT_Y_OFFSET = 0.02;
+
 const WIDE_CUBE_WIDTH = 2 * 3 + 0.2; // width stays fixed at 3 cubes
 
 export default function WideCube({ position = [0, 0, 0], height = 0.5, depth = 2, topLeftText = "HEADER", 
