@@ -1201,7 +1201,7 @@ const openLightbox = (content, type = 'image') => {
             {/* Video Player Plane - playingVideo (on top) */}
             {playingVideo && (
               <group 
-                position={isMobile ? [0, 4.7, 0.1] : [0, 6, 1.5]}  // Slight Z-offset to be on top
+                position={isMobile ? [0, 4.7, 1.5] : [0, 6, 1.5]}  // Slight Z-offset to be on top
                 rotation={isMobile ? [-Math.PI / 2.3, 0, -Math.PI / 2] : [-Math.PI / 2.37, 0, 0]} 
                 scale={isMobile ? [0.8, 0.8, 0.8] : [1, 1, 1]}
               >
@@ -1218,7 +1218,7 @@ const openLightbox = (content, type = 'image') => {
             {/* Video Player Plane - showVideo (whitebackground) */}
             {showVideo && (
               <group 
-                position={isMobile ? [0, 4.7, 0] : [0, 6, 1.5]} 
+                position={isMobile ? [0, 4.7, 1.5] : [0, 6, 1.5]} 
                 rotation={isMobile ? [-Math.PI / 2.3, 0, -Math.PI / 2] : [-Math.PI / 2.37, 0, 0]} 
                 scale={isMobile ? [0.8, 0.8, 0.8] : [1, 1, 1]}
               >

@@ -91,8 +91,8 @@ const VideoPlayerPlane = ({
       mute: enableAudio ? 0 : 1,
       playsInline: 1,
     controls: 1,
-    origin: typeof window !== 'undefined' ? window.location.origin : ''
-  
+    playlist: 'WGGgQzQwH54,9F9U-nmoVw0',
+    loop: 1  // Will loop through all videos
     },
   }), [enableAudio]);
 
@@ -126,9 +126,9 @@ const VideoPlayerPlane = ({
             center
             transform
             distanceFactor={1}
-            position={isMobile ? [0, 4.7, 0.1] : [0, 6.0, 1.5]}  // Slight Z-offset to be on top
+            position={isMobile ? [0, 4.75, 1.5] : [0, 6.0, 1.5]}  // Slight Z-offset to be on top
             rotation={isMobile ? [-Math.PI / 2.3, 0, -Math.PI / 2] : [-Math.PI / 2.37, 0, 0]} 
-            scale={isMobile ? [0.8, 0.8, 0.8] : [1, 1, 1]}
+            scale={isMobile ? [0.55, 0.55, 0.55] : [1, 1, 1]}
             style={{
                 width: '1920px',  // Standard HD width
                 height: '1080px', // Standard HD height

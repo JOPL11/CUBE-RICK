@@ -26,8 +26,8 @@ function CameraModeController({ isMapMode }) {
     })
     camera.position.set(
       isMapMode ? 0 : 7, 
-      isMapMode ? 12 : 2, 
-      isMapMode ? 3 : 5)
+      isMapMode ? 14 : 2, 
+      isMapMode ? 3 : 2)
     camera.lookAt(0, 0, 5)
     camera.updateProjectionMatrix()
       // Log controls setup
