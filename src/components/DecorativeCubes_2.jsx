@@ -3,12 +3,13 @@
 import { useRef, useEffect, useState } from 'react'
 import { gsap } from 'gsap'
 import { MotionPathPlugin } from 'gsap/MotionPathPlugin'
-import { Float } from '@react-three/drei'
+import { Float, RoundedBox } from '@react-three/drei'
 import * as THREE from 'three'
 import { useLoader } from '@react-three/fiber'
 import { TextureLoader } from 'three'
 import { useContext } from 'react';
 import { ThemeContext } from './Header';
+
 
 // Register GSAP plugins once
 if (typeof window !== 'undefined') {
@@ -315,18 +316,25 @@ const DecorativeCubes2 = ({ color = "#f57500" }) => {
               animateCubes();
             }}
           >
-            <boxGeometry args={[0.5, 0.5, 0.5]} />
+            <RoundedBox 
+              args={[0.7, 0.15, 0.7]} 
+              radius={0.05}  
+              smoothness={4} 
+            >
+            {/*<boxGeometry args={[0.5, 0.5, 0.5]} />*/}
             {/*<sphereGeometry args={[0.50, 33, 33]} /> radius, widthSegments, heightSegments */}
             <meshStandardMaterial 
               color={effectiveColor}
               metalness={0.1}
               roughness={0.3}
-              emissive={effectiveColor}
+              
               emissiveIntensity={0.2}
               depthTest={true} 
               depthWrite={true} 
             />
+                  </RoundedBox>
           </mesh>
+    
         </Float>
       ))}
     </>

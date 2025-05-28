@@ -1,22 +1,21 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  images: {
-    domains: ['localhost'],
-  },
-  // Disable Next.js font optimization
-  optimizeFonts: false,
-  
+  output: 'export',
+  images: { unoptimized: true }, 
   webpack: (config) => {
     config.module.rules.push({
-      test: /\.(ttf|eot|woff|woff2)$/,
-      type: 'asset/resource',
-      generator: {
-        // Preserve original font filenames and paths
-        filename: '[path][name][ext]'
-      }
+      test: /\.(woff|woff2|eot|ttf|otf)$/,
+      use: {
+        loader: 'file-loader',
+        options: {
+          name: '[name].[ext]',
+          publicPath: '/_next/static/fonts/',
+          outputPath: 'static/fonts/',
+        },
+      },
     });
     return config;
   },
-}
+};
 
 export default nextConfig;

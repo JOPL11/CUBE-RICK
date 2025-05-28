@@ -5,14 +5,6 @@ import { useLoader } from '@react-three/fiber';
 import { Float, OrbitControls, Html, Text } from '@react-three/drei';
 import { TextureLoader } from 'three/src/loaders/TextureLoader';
 import gsap from 'gsap';
-import { 
-englishCubes,
-germanCubes,
-frenchCubes,
-} from './cubeContent.js';
-import { CAMERA_SETTINGS } from '../config/cameraSettings';
-//import VideoPlayerPlane from './VideoPlayerPlane_nochrome';
-import VideoPlayerPlane from './YoutubePlane';
 
 const LanguageFloat = ({ children, index, activeLanguage }) => {
   const groupRef = useRef();
@@ -76,25 +68,6 @@ const LanguageFloat = ({ children, index, activeLanguage }) => {
             yoyo: true
           });
         }
-        else if (activeLanguage === 'en') {
-          // French - elegant wave
-          const phase = index * 0.35;
-          animationRef.current.pos = gsap.to(pos, {
-            y: baseY + 0.4 * Math.sin(phase),
-            duration: 7,
-            ease: "sine.inOut",
-            repeat: -1,
-            yoyo: true
-          });
-          animationRef.current.rot = gsap.to(rot, {
-            x: 0.5 * Math.sin(phase * -0.33),
-            z: 0.2 * Math.sin(phase * -0.5),
-            duration: 6,
-            ease: "sine.inOut",
-            repeat: -1,
-            yoyo: true
-          });
-        }
       }
     });
   }, [activeLanguage, index]);
@@ -113,12 +86,11 @@ const LanguageFloat = ({ children, index, activeLanguage }) => {
           {children}
         </Float>
       )}
-
     </group>
   );
 };
 
-import Cube from './Cube'
+import Cube from './Cube2'
 import WideCube from './WideCube_C';
 import Lightbox from './Lightbox'
 
@@ -129,9 +101,422 @@ const CUBE_SPACING = 2.1 // Space between cube centers (almost touching)
 const CUBE_Y_POSITION = 0 // Consistent Y position for all cubes
 const MOBILE_BREAKPOINT = 768 // Width in pixels for mobile/desktop breakpoint
 const MOBILE_HORIZONTAL_SPACING = 1.05 // Adjusted horizontal spacing for mobile
-const TABLET_BREAKPOINT = 1024;
-const DESKTOP_BREAKPOINT = 1440;
 
+
+const initialCubeTexts = [
+    { topLeftText: "NEWS", bottomRightText: "LATEST", htmlUrl: "https://www.jopl.de/2/index3.html", description: `Hello!
+        
+      Please bear with us while we currently migrate to this new Next.js + React 3 Fiber format –  
+      there might be some large and small corrections. 
+      
+      As for the texts, it will definitely be updated. In fact right now its so terrible you probably shouldn't even read this.
+      
+      Until its done, you can check out the old html5 site.` },
+    { topLeftText: "ABOUT", 
+      bottomRightText: "SKILLS", 
+      htmlUrl: "https://www.jopl.de/2/portfolio-main.html",
+      description: `A multidisciplinary creator from Montreal Canada, passionate about design, 3D, code, and motion - ranging from strict brand systems to boundary-pushing exhibits.
+  
+  Studied Communication-Design in Munich Germany. Currently based in Germany.
+  
+  Design skills include Layout, Screen-Design, Print, Illustration, Painting, Concept Sketches, Typography, CI, Campaign Psychology, Adobe Suite.
+  
+  Motion skills include 3D Modeling, 2D/3D Animation, Cinema4D, Blender. Premiere, After Effects, Expressions, Stardust, Plexus, VideoCopilot, Red Giant, Duik Tools, IK, FK, Lottie, Bodymovin, Audio, Colorgrading, Compositing. Render Engines: Octane, Redshift, Corona, Media Encoder, Handbrake and a ton of related peripheral stuff that, I mean we're gonna be here all day if I have to mention everything. Let's not get ludicrous. Some guy: "Do you do Advanced Lighting?" Me: "Yes, I do Advanced Lighting." I do Motion; From visual & motion concept to 2D / 3D asset-creation to screen-design to render, edit & post-production.
+  
+  Code skills include Next.js, Three.js, React 3 Fiber (thats React with a 3D WebGL render engine), WebXR, AFrame, GSAP, javascript, html5, css, Vite, npm, yarn.
+  
+  AI Skills include Stable Diffusion with custom workflows via ComfyUI, LoRAs and leveraging LLM's to achieve my goals, not the other way around.
+  
+  Spoken languages are English, German, Spanish and French. Canada / EU dual citizen.` },
+  { 
+    topLeftText: "ART-DIRECTION", 
+    bottomRightText: "GALLERY", 
+    htmlUrl: "https://www.jopl.de/2/portfolio-main.html",
+    videoUrl: "https://www.jopl.de/videos/Reeler_2025_Fader.mp4" ,
+    description: `I create and implement visual concepts, from original designs to refining existing CI/CD systems, with expertise in animation and interactive development. 3+ years management experience.
+  
+  15+ years collaborating with agencies, in-house teams, and startups - balancing innovation with brand 
+  compliance, ensuring visual consistency across all deliverables.` },
+    { topLeftText: "AFTER EFFECTS", bottomRightText: "2D / 3D MOTION DESIGN", description: `This is where vectors bend to my will—a symphony of easing curves so smooth, they’ve earned a PhD in Bézier seduction. No glitch goes unpunished, no keyframe left behind.
+        I earned my Doctorate in Graph-Easing at the University of RAM Crash. This little video took about a weekend to make. 
+        Then I sat on the tagline for three years before accidentally stumbling across it & polished it up last weekend. 
+      
+      Opens in a lightbox.`,  videoUrl: "https://www.jopl.de/video/AE1.mp4" },
+    { topLeftText: `CINEMA4D`, 
+      bottomRightText: "SHORT REEL",     
+      htmlUrl: "https://www.jopl.de/2/portfolio-main.html", 
+      videoUrl: "https://www.jopl.de/2/video/reel.mp4" , description: `Showreel showing pure 3D Motion-design.
+  
+      - Corporate Logos showcase the companies the scenes were made for.
+      - A short description of the project was added for many projects. 
+  
+      Opens in a lightbox.` },
+    { topLeftText: `UI/UX DEVELOPMENT`, 
+      bottomRightText: "CASE STUDY", 
+      htmlUrl: "https://www.jopl.de/2/portfolio-airbus-berlin3.html", 
+      description: `Airbus Berlin headquarters Showroom Exhibit.
+  
+      Opens in a new window.` },
+    { topLeftText: `XR/3D DEVELOPMENT`, bottomRightText: "INTERACTIVE", 
+      htmlUrl: "https://www.jopl.de/2/experiments.html", 
+      description: `WARNING: This link leads to an experimental playground. A collection of personal experiments showcasing:
+  
+      - Interactive 3D WebGL Experiments
+      - WebXR Experiments for use in the Quest3S headset.(Which is awesome by the way.)
+      
+      Pure creative play - no commercial constraints. Not for the corporately obsessed.`},
+      { topLeftText: "NEXT.JS", bottomRightText: "COMING SOON", description: "" },
+      { topLeftText: "FOOTER", bottomRightText: "IMPRESSUM", description: `IMPRESSUM
+  
+  Angaben gemäß § 5 TMG
+  
+        Jan Peiro-Lehmann
+        Kommunikationsdesigner Dipl.
+        Center for Innovation & Technology (TZL)
+        Donnersbergweg 1
+        67059 Ludwigshafen am Rhein
+        
+        Kontakt
+        
+        Telefon: (+49) 01520 - 317 2291
+        E-Mail: jan.peiro@protonmail.com
+        
+        
+        Es gelten folgende berufsrechtliche Regelungen:
+        Verbraucher­streit­beilegung/
+        Universal­schlichtungs­stelle
+        
+        Wir sind nicht bereit oder verpflichtet, an Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle teilzunehmen.
+  
+        Haftung für Inhalte
+        
+        Als Diensteanbieter sind wir gemäß § 7 Abs.1 TMG für eigene Inhalte auf diesen Seiten nach den allgemeinen Gesetzen verantwortlich. Nach §§ 8 bis 10 TMG sind wir als Diensteanbieter jedoch nicht verpflichtet, übermittelte oder gespeicherte fremde Informationen zu überwachen oder nach Umständen zu forschen, die auf eine rechtswidrige Tätigkeit hinweisen.
+  
+        Verpflichtungen zur Entfernung oder Sperrung der Nutzung von Informationen nach den allgemeinen Gesetzen bleiben hiervon unberührt. Eine diesbezügliche Haftung ist jedoch erst ab dem Zeitpunkt der Kenntnis einer konkreten Rechtsverletzung möglich. Bei Bekanntwerden von entsprechenden Rechtsverletzungen werden wir diese Inhalte umgehend entfernen.
+  
+        Haftung für Links
+        
+        Unser Angebot enthält Links zu externen Websites Dritter, auf deren Inhalte wir keinen Einfluss haben. Deshalb können wir für diese fremden Inhalte auch keine Gewähr übernehmen. Für die Inhalte der verlinkten Seiten ist stets der jeweilige Anbieter oder Betreiber der Seiten verantwortlich. Die verlinkten Seiten wurden zum Zeitpunkt der Verlinkung auf mögliche Rechtsverstöße überprüft. Rechtswidrige Inhalte waren zum Zeitpunkt der Verlinkung nicht erkennbar.
+  
+        Eine permanente inhaltliche Kontrolle der verlinkten Seiten ist jedoch ohne konkrete Anhaltspunkte einer Rechtsverletzung nicht zumutbar. Bei Bekanntwerden von Rechtsverletzungen werden wir derartige Links umgehend entfernen.
+  
+        Urheberrecht
+        
+        Die durch die Seitenbetreiber erstellten Inhalte und Werke auf diesen Seiten unterliegen dem deutschen Urheberrecht. Die Vervielfältigung, Bearbeitung, Verbreitung und jede Art der Verwertung außerhalb der Grenzen des Urheberrechtes bedürfen der schriftlichen Zustimmung des jeweiligen Autors bzw. Erstellers. Downloads und Kopien dieser Seite sind nur für den privaten, nicht kommerziellen Gebrauch gestattet.
+  
+        Soweit die Inhalte auf dieser Seite nicht vom Betreiber erstellt wurden, werden die Urheberrechte Dritter beachtet. Insbesondere werden Inhalte Dritter als solche gekennzeichnet. Sollten Sie trotzdem auf eine Urheberrechtsverletzung aufmerksam werden, bitten wir um einen entsprechenden Hinweis. Bei Bekanntwerden von Rechtsverletzungen werden wir derartige Inhalte umgehend entfernen.
+  
+        Datenschutzerklärung
+        
+        Verantwortliche Stelle im Sinne der Datenschutzgesetze ist:
+        
+        Jan Peiro-Lehmann
+        
+        Wir halten uns an die Grundsätze der Datenvermeidung und Datensparsamkeit. Wir speichern keine personenbezogenen Daten.
+  
+        Quelle: e-recht24.de ` },
+        
+  ]
+  const initialCubeTexts2 = [
+      { topLeftText: "NEWS", bottomRightText: "NEUIGKEITEN", description: "Derzeit migrieren wir zu diesem neuen Next.js + React Three Fiber Format – es wird sich alles noch verändern, insbesonders die Texte. bis es fertig ist, können Sie die alte HTML5-Website besuchen.", externalUrl: "https://www.jopl.de/2/index2.html", videoUrl: "/videos/video2.mp4" },
+      { topLeftText: "ÜBER MICH", 
+        bottomRightText: "SKILLS", 
+        description: `Ein multidisziplinärer Kreativer aus Montreal, Kanada, mit Leidenschaft für Design, 3D, Code und Motion – von strengen Markensystemen bis zu grenzsprengenden Ausstellungen.
+    
+    Studierte Kommunikationsdesign in München, Deutschland. Derzeit in Deutschland ansässig.
+    
+    Design-Skills:
+    Layout, Screen-Design, Print, Illustration, Malerei, Konzeptskizzen, Typografie, CI, Kampagnenpsychologie, Adobe Suite.
+    
+    Motion-Skills:
+    3D-Modellierung, 2D/3D-Animation, Cinema4D, Blender. Premiere, After Effects, Expressions, Stardust, Plexus, VideoCopilot, Red Giant, Duik Tools, IK, FK, Lottie, Bodymovin, Audio, Colorgrading, Compositing. Render-Engines: Octane, Redshift, Corona, Media Encoder, Handbrake – und eine Menge verwandter Tools, die hier aufzuzählen den Rahmen sprengen würde. (Frage: „Können Sie Advanced Lighting?“ Antwort: „Ja, kann ich.“) Ich mache Motion – vom visuellen Konzept über 2D/3D-Asset-Erstellung bis zu Screen-Design, Rendering, Schnitt und Postproduktion.
+    
+    Code-Skills:
+    Next.js, Three.js, React Three Fiber (für Deutsche: WebGL mit React-Basis), WebXR, AFrame, GSAP, javascript, html5, css, Vite, npm, yarn.
+    
+    AI-Skills:
+    Stable Diffusion mit individuellen Workflows via ComfyUI, LoRAs sowie der strategische Einsatz von LLMs – die Technik dient meinen Zielen, nicht umgekehrt.
+    
+    Sprachen:
+    Englisch, Deutsch, Spanisch, Französisch. Doppelstaatsbürger (Kanada/EU).
+    
+    Zur deutschen Sprache:
+    Ich kommuniziere direkt und unverschlüsselt – so, wie es im Duden steht, nicht wie im Wirtschaftsprotokoll.` },
+    { topLeftText: "ART-DIRECTION", 
+      bottomRightText: "GALERIE", 
+      description: `Ich entwickle und setze visuelle Konzepte um – von Originaldesigns bis zur Verfeinerung bestehender CI/CD-Systeme – mit Expertise in Animation und interaktiver Entwicklung. Mehr als 3 Jahre Führungserfahrung.
+    
+    15+ Jahre Zusammenarbeit mit Agenturen, Inhouse-Teams und Startups - immer im Spannungsfeld zwischen 
+    Innovation und Markenkonformität, um visuelle Konsistenz über alle Deliverables hinweg zu gewährleisten. 
+    `, videoUrl: "https://www.jopl.de/2/video/reel.mp4", 
+    htmlUrl: "https://www.jopl.de/2/portfolio-main.html",  },
+      { topLeftText: "AFTER EFFECTS", bottomRightText: "2D / 3D MOTION DESIGN", description: `Meine Animationen sind so durchoptimiert, dass sie einen Doktortitel in Bézier-Kurven verdient hätten - 
+        wenn Adobe nicht ständig die Abschlussarbeit löschen würde (RAM joke). Hier wird jedes Keyframe mit Gründlichkeit gesetzt... bis die GPU streikt und wir uns alle an den heiligen drei Worten orientieren: 
+        
+        'Cache leeren. Nochmal. NEIN, NOCHMAL.'
+    
+    .`, videoUrl: "https://www.jopl.de/video/AE1.mp4" },
+      { topLeftText: `CINEMA4D`, bottomRightText: "MOTION REEL", description: `Showreel mit reinem 3D-Motion-Design:
+    
+        Gezeigte Corporate-Logos kennzeichnen die Unternehmen, für die die Szenen erstellt wurden.
+    
+        Zu vielen Projekten wurde eine kurze aber prägnante Beschreibung hinzugefügt.
+    
+    Öffnet in einem neuen Fenster.`, 
+    videoUrl: "https://www.jopl.de/2/video/reel.mp4", 
+    htmlUrl: "https://www.jopl.de/2/portfolio-main.html" 
+    },
+      { topLeftText: `ANIMATION`, bottomRightText: "MOTION REEL 2", description: `Showreel mit 3D-Motion-Design, 2D-Motion-Design, 2D-Textanimation, 2D-Character-Animation in 3D-Umgebungen, IK-Animation – kurzum: Das volle Programm (fast).
+    
+        Corporate-Logos zeigen die Unternehmen, für die die Szenen erstellt wurden.
+    
+        Im Grunde ein Motion-Smorgasbord der Fähigkeiten, eingesetzt in echten Projekten.
+    
+    Öffnet in einem neuen Fenster.` },
+      { topLeftText: `XR/3D Development`, bottomRightText: "INTERACTIVE", description: `WARNUNG: Dieser Link führt zu einem experimentellen Spielplatz.
+    
+    Eine Sammlung persönlicher Experimente, die zeigen:
+    
+        Interaktive WebGL-3D-Experimente
+    
+        WebXR-Experimente für die Nutzung mit dem Quest3S-Headset (das übrigens fantastisch ist).
+    
+    Reine kreative Spielerei – frei von kommerziellen Zwängen. Nichts für Corporate-Fanatiker.
+    
+    Öffnet in einem neuen Fenster.`, externalUrl: "https://www.jopl.de/2/experiments.html" },
+      { topLeftText: "NEXT.JS", bottomRightText: "COMING SOON", description: "" },
+      { topLeftText: "FOOTER", bottomRightText: "IMPRESSUM", description: `IMPRESSUM
+  
+  Angaben gemäß § 5 TMG
+  
+        Jan Peiro-Lehmann
+        Kommunikationsdesigner Dipl.
+        Center for Innovation & Technology (TZL)
+        Donnersbergweg 1
+        67059 Ludwigshafen am Rhein
+        
+        Kontakt
+        
+        Telefon: (+49) 01520 - 317 2291
+        E-Mail: jan.peiro@protonmail.com
+        
+        
+        Es gelten folgende berufsrechtliche Regelungen:
+        Verbraucher­streit­beilegung/
+        Universal­schlichtungs­stelle
+        
+        Wir sind nicht bereit oder verpflichtet, an Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle teilzunehmen.
+  
+        Haftung für Inhalte
+        
+        Als Diensteanbieter sind wir gemäß § 7 Abs.1 TMG für eigene Inhalte auf diesen Seiten nach den allgemeinen Gesetzen verantwortlich. Nach §§ 8 bis 10 TMG sind wir als Diensteanbieter jedoch nicht verpflichtet, übermittelte oder gespeicherte fremde Informationen zu überwachen oder nach Umständen zu forschen, die auf eine rechtswidrige Tätigkeit hinweisen.
+  
+        Verpflichtungen zur Entfernung oder Sperrung der Nutzung von Informationen nach den allgemeinen Gesetzen bleiben hiervon unberührt. Eine diesbezügliche Haftung ist jedoch erst ab dem Zeitpunkt der Kenntnis einer konkreten Rechtsverletzung möglich. Bei Bekanntwerden von entsprechenden Rechtsverletzungen werden wir diese Inhalte umgehend entfernen.
+  
+        Haftung für Links
+        
+        Unser Angebot enthält Links zu externen Websites Dritter, auf deren Inhalte wir keinen Einfluss haben. Deshalb können wir für diese fremden Inhalte auch keine Gewähr übernehmen. Für die Inhalte der verlinkten Seiten ist stets der jeweilige Anbieter oder Betreiber der Seiten verantwortlich. Die verlinkten Seiten wurden zum Zeitpunkt der Verlinkung auf mögliche Rechtsverstöße überprüft. Rechtswidrige Inhalte waren zum Zeitpunkt der Verlinkung nicht erkennbar.
+  
+        Eine permanente inhaltliche Kontrolle der verlinkten Seiten ist jedoch ohne konkrete Anhaltspunkte einer Rechtsverletzung nicht zumutbar. Bei Bekanntwerden von Rechtsverletzungen werden wir derartige Links umgehend entfernen.
+  
+        Urheberrecht
+        
+        Die durch die Seitenbetreiber erstellten Inhalte und Werke auf diesen Seiten unterliegen dem deutschen Urheberrecht. Die Vervielfältigung, Bearbeitung, Verbreitung und jede Art der Verwertung außerhalb der Grenzen des Urheberrechtes bedürfen der schriftlichen Zustimmung des jeweiligen Autors bzw. Erstellers. Downloads und Kopien dieser Seite sind nur für den privaten, nicht kommerziellen Gebrauch gestattet.
+  
+        Soweit die Inhalte auf dieser Seite nicht vom Betreiber erstellt wurden, werden die Urheberrechte Dritter beachtet. Insbesondere werden Inhalte Dritter als solche gekennzeichnet. Sollten Sie trotzdem auf eine Urheberrechtsverletzung aufmerksam werden, bitten wir um einen entsprechenden Hinweis. Bei Bekanntwerden von Rechtsverletzungen werden wir derartige Inhalte umgehend entfernen.
+  
+        Datenschutzerklärung
+        
+        Verantwortliche Stelle im Sinne der Datenschutzgesetze ist:
+        
+        Jan Peiro-Lehmann
+        
+        Wir halten uns an die Grundsätze der Datenvermeidung und Datensparsamkeit. Wir speichern keine personenbezogenen Daten.
+  
+        Quelle: e-recht24.de ` },
+    ]
+    
+  const initialCubeTexts3 = [
+      { topLeftText: "VENT NOUVEAU", bottomRightText: "MUTATION", description: "Il va y avoir beaucoup de modifications, surtout pour le texte. Actuellement, nous migrons vers ce nouveau format Next.js + React Three Fiber – en attendant sa finalisation, vous pouvez visiter l'ancien site en HTML5.", htmlUrl: "https://www.jopl.de/2/index3.html" , videoUrl: "/videos/video3.mp4" },
+      { topLeftText: "À PROPOS", 
+        bottomRightText: "Profil professionnel", 
+        description: `Créatif multidisciplinaire né à Barcelone, formé à Montréal et maintenant établi en Allemagne. Passionné par le design, la 3D et le motion, je navigue entre systèmes d'identité rigoureux et créations expérimentales.
+    
+    QUI SUIS-JE
+    Créatif technique quadrilingue (EN/DE/FR/ES) avec un accent québécois édulcoré par 20 ans d'expat' entre Barcelone, Philadelphie, Toronto et Munich. Spécialiste hybrides design/motion/code. 
+    
+    MES ARSENAUX
+    
+    DESIGN:
+    
+        • Layout • UI • Print • Illustration • Peinture • Croquis • Suite Adobe • Typographie • Identité visuelle (CI) • Psychologie des campagnes 
+    
+    2D / 3D :
+    
+        De la modélisation procédurale au rigging complexe (IK/FK)
+        Rendu photoréaliste (Octane/Redshift/Chaos Render) et stylisé
+        Pipeline Cinema4D/Blender → After Effects oubien Pipeline Blender → React 3 Fiber  
+        Animation traditionelle et assistée (Duik Tools (IK/FK), Lottie, Bodymovin, et plus. )
+        VFX avancés (Stardust, Plexus, Moccha, VideoCopilot, Red Giant, audio )
+        Post-prod couleur, étalonnage et compositing
+    
+    Code Créatif :
+    
+    1. SEO Technique & Contenu
+    
+    Architecture Jamstack (Next.js) pour un rendu ultra-rapide.
+        Audit et optimisation Core Web Vitals (LCP, FID, CLS).
+        Balisage sémantique (Schema.org, OpenGraph) et stratégie de mots-clés.
+    
+    2. Expériences 3D/XR Immersives
+    
+        WebGL/Three.js : Animations interactives, effets visuels "scroll-based".
+        WebXR : Prototypage rapide d'expériences VR/AR accessibles dans le navigateur. 
+        Intégration React Three Fiber pour une 3D déclarative et réactive.
+    
+    3. Performance Web Exigeante
+    
+        Chargement intelligent des assets 3D (GLTF compression, suspense).
+        Optimisation des shaders et gestion du garbage collection.
+        Hybridation React + Web Workers pour du calcul lourd sans bloquer l'UI.
+    
+    4. Automatisation & Micro-Optimisations
+    
+        Scripts CI/CD (GitHub Actions) pour le déploiement automatisé.
+        Outils maison (JS/CSS) pour générer des grids, palettes de couleurs, etc.
+    
+    IA Générative :
+    
+        Workflows Stable Diffusion optimisés
+        Fine-tuning avec LoRAs personnalisés
+        Intégration dans des pipelines pro
+    
+    POURQUOI MOI
+    ✓ 15 ans à résoudre des problèmes complexes
+    ✓ Bilingue technique (même si mon "accent est maintenant plus Munichois que Montréalais")
+    ✓ Double culture design européen & approche nord-américaine
+    ✓ Grand admirateur de la tranquillité interstellaire
+    
+    CE QU'ON DIT DE MOI
+    "Il parle le langage des artistes et des développeurs - et son accent est devenu un charmant mélange transatlantique."` },
+    { topLeftText: "ART DIRECTOR", bottomRightText: "GALERIE", description: `Je conçois et implémente des concepts visuels, 
+      des créations originales à l'optimisation de systèmes CI/CD existants, avec une expertise en animation et 
+      développement interactif. Plus de 3 ans d'expérience en management.
+    
+    15+ ans de collaboration avec des agences, des équipes internes et des startups - 
+    alliant innovation et conformité à l'identité de marque, tout en garantissant une 
+    cohérence visuelle sur tous les livrables.`, htmlUrl: "https://www.jopl.de/2/portfolio-main.html",
+    videoUrl: "https://www.jopl.de/videos/Reeler_2025_Fader.mp4" },
+    { topLeftText: "AFTER EFFECTS", bottomRightText: "APERÇU TECHNIQUE", description: `Compétences en Motion :
+    
+        Modélisation 3D
+    
+        Animation 2D/3D
+    
+        Logiciels : Cinema4D, Blender
+    
+    Postproduction & Effets :
+    
+        Montage : Premiere
+    
+        Effets visuels : After Effects (Expressions, Stardust, Plexus)
+        Outils complémentaires : VideoCopilot, Red Giant, Duik Tools (IK/FK)
+    
+        Animation web : Lottie, Bodymovin
+    
+        Traitement audio, étalonnage, compositing
+    
+    Moteurs de rendu :
+    
+        Octane, Redshift, Corona
+        Encodage : Media Encoder, Handbrake
+    
+    Oui, je parle français comme une vache espagnole/canadienne… mais mes animations, elles, parlent toutes les langues.
+    
+    Je prends en charge l'intégralité du processus motion :
+    du concept visuel → création d'assets 2D/3D → design d'interface → rendu → montage → postproduction.
+    
+    (Ouvre dans une nouvelle fenêtre.)`,
+    videoUrl: "https://www.jopl.de/video/AE1.mp4" },
+      { topLeftText: `MOTION RAPIDE`, bottomRightText: "(Version courte)", description: `Showreel de motion design 3D pur :
+        Ce showreel 3D présente des projets réalisés pour les marques identifiées par leurs logos. Des notices descriptives accompagnent les principaux travaux.
+    
+        Les logos d'entreprise affichés identifient les sociétés pour lesquelles les scènes ont été créées.
+    
+        Des descriptions courtes mais percutantes accompagnent de nombreux projets.`, htmlUrl: "https://www.jopl.de/videos/Reeler_2025_Fader.mp4" },
+      { topLeftText: `MONTAGE MOTION COMPLET`, bottomRightText: "(Version Longue)", description: `Showreel : Motion Design tout-en-un
+    Un concentré de motion design : hybridations 2D/3D, personnages animés en IK, typographie vivante – le tout au service de marques identifiées par leurs logos.
+    
+        Les logos clients identifient les entreprises pour lesquelles les séquences ont été produites.
+    
+        Un véritable buffet de compétences motion, déployées sur des projets réels.
+    
+    (Ouvre dans une nouvelle fenêtre.)`, },
+      { topLeftText: `XR/3D Developer`, bottomRightText: "INTERACTIVE", description: `AVERTISSEMENT : Ce lien mène à un laboratoire expérimental.
+    
+    Une collection de projets personnels explorant :
+    
+        Expériences interactives WebGL/3D
+    
+        Prototypes WebXR (optimisés pour Quest 3S – un casque remarquable, soit dit en passant)
+    
+    Pur terrain de jeu créatif – zéro contrainte commerciale.
+    Clairement pas fait pour les adeptes du corporatisme.
+    
+    (Ouvre dans une nouvelle fenêtre.)`, externalUrl: "https://www.jopl.de/2/experiments.html" },
+      { topLeftText: "NEXT.JS", bottomRightText: "PROCHAINEMENT", description: "" },
+      { topLeftText: "FOOTER", bottomRightText: "IMPRESSUM", description: `IMPRESSUM
+  
+  Angaben gemäß § 5 TMG
+  
+        Jan Peiro-Lehmann
+        Kommunikationsdesigner Dipl.
+        Center for Innovation & Technology (TZL)
+        Donnersbergweg 1
+        67059 Ludwigshafen am Rhein
+        
+        Kontakt
+        
+        Telefon: (+49) 01520 - 317 2291
+        E-Mail: jan.peiro@protonmail.com
+        
+        
+        Es gelten folgende berufsrechtliche Regelungen:
+        Verbraucher­streit­beilegung/
+        Universal­schlichtungs­stelle
+        
+        Wir sind nicht bereit oder verpflichtet, an Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle teilzunehmen.
+  
+        Haftung für Inhalte
+        
+        Als Diensteanbieter sind wir gemäß § 7 Abs.1 TMG für eigene Inhalte auf diesen Seiten nach den allgemeinen Gesetzen verantwortlich. Nach §§ 8 bis 10 TMG sind wir als Diensteanbieter jedoch nicht verpflichtet, übermittelte oder gespeicherte fremde Informationen zu überwachen oder nach Umständen zu forschen, die auf eine rechtswidrige Tätigkeit hinweisen.
+  
+        Verpflichtungen zur Entfernung oder Sperrung der Nutzung von Informationen nach den allgemeinen Gesetzen bleiben hiervon unberührt. Eine diesbezügliche Haftung ist jedoch erst ab dem Zeitpunkt der Kenntnis einer konkreten Rechtsverletzung möglich. Bei Bekanntwerden von entsprechenden Rechtsverletzungen werden wir diese Inhalte umgehend entfernen.
+  
+        Haftung für Links
+        
+        Unser Angebot enthält Links zu externen Websites Dritter, auf deren Inhalte wir keinen Einfluss haben. Deshalb können wir für diese fremden Inhalte auch keine Gewähr übernehmen. Für die Inhalte der verlinkten Seiten ist stets der jeweilige Anbieter oder Betreiber der Seiten verantwortlich. Die verlinkten Seiten wurden zum Zeitpunkt der Verlinkung auf mögliche Rechtsverstöße überprüft. Rechtswidrige Inhalte waren zum Zeitpunkt der Verlinkung nicht erkennbar.
+  
+        Eine permanente inhaltliche Kontrolle der verlinkten Seiten ist jedoch ohne konkrete Anhaltspunkte einer Rechtsverletzung nicht zumutbar. Bei Bekanntwerden von Rechtsverletzungen werden wir derartige Links umgehend entfernen.
+  
+        Urheberrecht
+        
+        Die durch die Seitenbetreiber erstellten Inhalte und Werke auf diesen Seiten unterliegen dem deutschen Urheberrecht. Die Vervielfältigung, Bearbeitung, Verbreitung und jede Art der Verwertung außerhalb der Grenzen des Urheberrechtes bedürfen der schriftlichen Zustimmung des jeweiligen Autors bzw. Erstellers. Downloads und Kopien dieser Seite sind nur für den privaten, nicht kommerziellen Gebrauch gestattet.
+  
+        Soweit die Inhalte auf dieser Seite nicht vom Betreiber erstellt wurden, werden die Urheberrechte Dritter beachtet. Insbesondere werden Inhalte Dritter als solche gekennzeichnet. Sollten Sie trotzdem auf eine Urheberrechtsverletzung aufmerksam werden, bitten wir um einen entsprechenden Hinweis. Bei Bekanntwerden von Rechtsverletzungen werden wir derartige Inhalte umgehend entfernen.
+  
+        Datenschutzerklärung
+        
+        Verantwortliche Stelle im Sinne der Datenschutzgesetze ist:
+        
+        Jan Peiro-Lehmann
+        
+        Wir halten uns an die Grundsätze der Datenvermeidung und Datensparsamkeit. Wir speichern keine personenbezogenen Daten.
+  
+        Quelle: e-recht24.de `},
+    ]
+  
+  
   
 
   const LinkIcon = () => (
@@ -239,14 +624,13 @@ const WideCube2 = ({ position, text, text2, onClick }) => {
   );
 };
 
-function CubeLayout({ onCubeSelect, activeLanguage,  onAboutClick}) {
+function CubeLayout({ onCubeSelect, activeLanguage }) {
     const [isMobile, setIsMobile] = useState(false)
     const logoTexture = useLoader(TextureLoader, '/images/logo2.png')
     const shadowTexture = useLoader(TextureLoader, '/images/shadows.png')
     const [showImpressum, setShowImpressum] = useState(false);
     const [lightboxOpen, setLightboxOpen] = useState(false);
     const [lightboxContent, setLightboxContent] = useState(null);
-
     useEffect(() => {
       const checkMobile = () => {
         setIsMobile(window.innerWidth < MOBILE_BREAKPOINT)
@@ -259,31 +643,17 @@ function CubeLayout({ onCubeSelect, activeLanguage,  onAboutClick}) {
         // Clean up any other resources if needed
       };
     }, [])
-
-    const handleAboutClick = () => {
-      console.log("About clicked")
-      onCubeSelect(1)
-      //setAboutOpen(!aboutOpen); // Toggles about panel
-
-      // Could also: scroll to about section, open modal, etc.
-    };
   
-    const cubeTexts = activeLanguage === 'de' ? germanCubes : 
-                     activeLanguage === 'fr' ? frenchCubes : 
-                     englishCubes;
-
-
-                     // To open a video
-
-
-   {/* ===================================== MOBILE STARTS HERE ============================================================*/}
+    const cubeTexts = activeLanguage === 'de' ? initialCubeTexts2 : 
+                     activeLanguage === 'fr' ? initialCubeTexts3 : 
+                     initialCubeTexts;
 
     if (isMobile) {
-      const Z_OFFSET = -1.5;
+      const Z_OFFSET = -3.0;
       return (
         <>
-            {/* Row Zero WIDECUBE 
-            <group position={[0, CUBE_Y_POSITION + 2.0, -CUBE_SPACING * 3.95]}> */}
+            {/* Row Zero WIDECUBE */}
+            <group position={[0, CUBE_Y_POSITION + 2.0, -CUBE_SPACING * 3.95]}>
           {/* Ôåæ Adjust Y (+1) and Z (-2.5) to fine-tune placement
           <LottieHeader 
           path="/images/data_logo.json"
@@ -291,7 +661,7 @@ function CubeLayout({ onCubeSelect, activeLanguage,  onAboutClick}) {
           scale={0.7}
           opacity={0.5}
         />
-        
+         */}
           <Float speed={1.5} rotationIntensity={0.2} floatIntensity={0.1}>
             <Cube
               key={`cube-0-${activeLanguage}-0`}
@@ -303,8 +673,8 @@ function CubeLayout({ onCubeSelect, activeLanguage,  onAboutClick}) {
               scale={[2, 3, 2]} // 3 cubes wide plus 2 gaps
               rotation={[0, 0, 0]}
             />
-          </Float> 
-        </group>  */}
+          </Float>
+        </group>
           {/* First row       color={getCubeColor(0)} */}
           <group position={[-MOBILE_HORIZONTAL_SPACING, CUBE_Y_POSITION, -CUBE_SPACING + Z_OFFSET]}>
             
@@ -364,7 +734,6 @@ function CubeLayout({ onCubeSelect, activeLanguage,  onAboutClick}) {
                 topLeftText={cubeTexts[3].topLeftText}
                 bottomRightText={cubeTexts[3].bottomRightText}
                 onClick={() => onCubeSelect(3)}
-               // onClick={() => openLightbox(cubeTexts[3].videoUrl)}
                 color="#3d3d3d"
                 videoUrl={cubeTexts[3].videoUrl}
                 scale={[1, 1, 1]}
@@ -382,8 +751,6 @@ function CubeLayout({ onCubeSelect, activeLanguage,  onAboutClick}) {
                 topLeftText={cubeTexts[4].topLeftText}
                 bottomRightText={cubeTexts[4].bottomRightText}
                 onClick={() => onCubeSelect(4)}
-               //onClick={() => openVideoLightbox(cubeTexts[4].videoUrl)}
-                //onClick={() => openLightbox(cubeTexts[4].videoUrl)}
                 color="#3d3d3d"
                 videoUrl={cubeTexts[4].videoUrl}
                 scale={[1, 1, 1]}
@@ -399,7 +766,6 @@ function CubeLayout({ onCubeSelect, activeLanguage,  onAboutClick}) {
                 topLeftText={cubeTexts[5].topLeftText}
                 bottomRightText={cubeTexts[5].bottomRightText}
                 onClick={() => onCubeSelect(5)}
-               
                 color={getCubeColor(5)}
                 videoUrl={cubeTexts[5].videoUrl}
                 scale={[1, 1, 1]}
@@ -426,22 +792,22 @@ function CubeLayout({ onCubeSelect, activeLanguage,  onAboutClick}) {
           </group>
           <group position={[MOBILE_HORIZONTAL_SPACING, CUBE_Y_POSITION, CUBE_SPACING * 2 + Z_OFFSET]}>
           
-            <LanguageFloat index={8} activeLanguage={activeLanguage}>
+            <LanguageFloat index={7} activeLanguage={activeLanguage}>
               <Cube 
-                key={`cube-${8}-${activeLanguage}`}
+                key={`cube-${7}-${activeLanguage}`}
                 position={[0, 0, 0]}
-                topLeftText={cubeTexts[8].topLeftText}
-                bottomRightText={cubeTexts[8].bottomRightText}
-                onClick={() => onCubeSelect(8)}
+                topLeftText={cubeTexts[7].topLeftText}
+                bottomRightText={cubeTexts[7].bottomRightText}
+                onClick={() => onCubeSelect(7)}
                 color="#3d3d3d"
-                videoUrl={cubeTexts[8].videoUrl}
+                videoUrl={cubeTexts[7].videoUrl}
                 scale={[1, 1, 1]}
                 rotation={[0, 0, 0]}
               />
             </LanguageFloat>
           </group>
   
-          {/* Fifth row (single cube) 
+          {/* Fifth row (single cube) */}
           <group position={[0, CUBE_Y_POSITION, CUBE_SPACING * 3 + Z_OFFSET]}>
             <LanguageFloat index={8} activeLanguage={activeLanguage}>
               <Cube 
@@ -456,14 +822,14 @@ function CubeLayout({ onCubeSelect, activeLanguage,  onAboutClick}) {
                 rotation={[0, 0, 0]}
               />
             </LanguageFloat>
-          </group> */}
+          </group>
           <mesh
             position={[0, -1.5, 0]} // adjust Y to match cube base
             rotation={[-Math.PI / 2, 0, 0]}
             renderOrder={1}
             scale={[6.5, 6.5, 1]} // covers the grid area
           >
-            <planeGeometry args={[1.2, 3.2]} />
+            <planeGeometry args={[1.2, 1.2]} />
             <meshBasicMaterial
               map={shadowTexture}
               transparent={true}
@@ -473,7 +839,7 @@ function CubeLayout({ onCubeSelect, activeLanguage,  onAboutClick}) {
               polygonOffsetFactor={-2}
               polygonOffsetUnits={-2}
             />
-          </mesh> 
+          </mesh>
         </>
       )
     }
@@ -616,15 +982,15 @@ function CubeLayout({ onCubeSelect, activeLanguage,  onAboutClick}) {
         </group>
         <group position={[0, CUBE_Y_POSITION, CUBE_SPACING]}>
       
-          <LanguageFloat index={8} activeLanguage={activeLanguage}>
+          <LanguageFloat index={7} activeLanguage={activeLanguage}>
             <Cube 
-              key={`cube-${8}-${activeLanguage}`}
+              key={`cube-${7}-${activeLanguage}`}
               position={[0, 0, 0]}
-              topLeftText={cubeTexts[8].topLeftText}
-              bottomRightText={cubeTexts[8].bottomRightText}
-              onClick={() => onCubeSelect(8)}
+              topLeftText={cubeTexts[7].topLeftText}
+              bottomRightText={cubeTexts[7].bottomRightText}
+              onClick={() => onCubeSelect(7)}
               color={getCubeColor(1)}
-              videoUrl={cubeTexts[8].videoUrl}
+              videoUrl={cubeTexts[7].videoUrl}
               scale={[1, 1, 1]}
               rotation={[0, 0, 0]}
             />
@@ -635,11 +1001,11 @@ function CubeLayout({ onCubeSelect, activeLanguage,  onAboutClick}) {
             <Cube 
               key={`cube-${8}-${activeLanguage}`}
               position={[0, 0, 0]}
-              topLeftText={cubeTexts[7].topLeftText}
-              bottomRightText={cubeTexts[7].bottomRightText}
-              onClick={() => onCubeSelect(7)}
+              topLeftText={cubeTexts[8].topLeftText}
+              bottomRightText={cubeTexts[8].bottomRightText}
+              onClick={() => onCubeSelect(8)}
               color={getCubeColor(1)}
-              videoUrl={cubeTexts[7].videoUrl}
+              videoUrl={cubeTexts[8].videoUrl}
               scale={[1, 1, 1]}
               rotation={[0, 0, 0]}
             />
@@ -666,136 +1032,30 @@ function CubeLayout({ onCubeSelect, activeLanguage,  onAboutClick}) {
     )
   }
 
-  const cubeToFlyTarget = {
-    4: 'button4',  // Cube index 4 maps to button4 target
-    // Add other mappings as needed
-  };
-
-
-
-  export default function InteractiveCubesScene({ isMapMode, activeLanguage, cameraControllerRef }) {
-
+  export default function InteractiveCubesScene() {
     const { gl } = useThree();
     const [selectedCube, setSelectedCube] = useState(null);
-    //const [activeLanguage, setActiveLanguage] = useState('en');
+    const [activeLanguage, setActiveLanguage] = useState('de');
     const [initialAnimTrigger, setInitialAnimTrigger] = useState(0);
     const [lightboxOpen, setLightboxOpen] = useState(false);
     const [lightboxContent, setLightboxContent] = useState(null);
     const [lightboxType, setLightboxType] = useState('image');
     const [panelRemoved, setPanelRemoved] = useState(false);
-    const [playingVideo, setPlayingVideo] = useState(null);
     const [videoReadyToShow, setVideoReadyToShow] = useState(false);
     const timeoutRef = useRef(null); 
     const videoRefCallback = useRef(null);
     const videoRefForPause = useRef(null);
     const cubeRefs = useRef([]);
-    const [showVideo, setShowVideo] = useState(true); // Add state for video visibility
-    const [videoUrl2, setVideoUrl] = useState('https://youtu.be/WGGgQzQwH54'); // Add default video URL
-    const [isMobile, setIsMobile] = useState(false);
-    const [videoKey, setVideoKey] = useState(0);
-    const [enableVideoAudio, setEnableVideoAudio] = useState(false);
-
-    // Add this useEffect hook inside the component
-    useEffect(() => {
-      const checkIfMobile = () => {
-        setIsMobile(window.innerWidth < 768); // Match the breakpoint used in VideoPlayerPlane
-      };
-      
-      // Initial check
-      checkIfMobile();
-      
-      // Add event listener for window resize
-      window.addEventListener('resize', checkIfMobile);
-      
-      // Cleanup
-      return () => {
-        window.removeEventListener('resize', checkIfMobile);
-      };
-    }, []);
-
-    const parseTextWithTags = (text) => {
-      return text.split(/(<b>.*?<\/b>)/).map((part, index) => {
-        if (part.startsWith('<b>') && part.endsWith('</b>')) {
-          return <strong key={index}>{part.slice(3, -4)}</strong>;
-        }
-        return part;
-      });
-    };
-
-    
-    // Dynamic width calculation for editor UI
-    const calculateEditorWidth = () => {
-      const screenWidth = window.innerWidth;
-      if (screenWidth < MOBILE_BREAKPOINT) return '420px';  // Mobile
-      if (screenWidth < TABLET_BREAKPOINT) return '500px'; // Tablet
-      if (screenWidth < DESKTOP_BREAKPOINT) return '550px'; // Large Tablet
-      return '600px';  // Desktop and larger screens
-    };
-
 
     const handleCubeSelect = (index) => {
-      console.log('[ICS_C] Cube selected:', index);
-      const videoUrl = cubeTexts[index].videoUrl;
-      console.log('[ICS_C] Video URL:', videoUrl);
-      // Handle cube 4 click - show and replay the video
-      if (index === 4) {
-        console.log('[ICS_C] Cube 4 clicked, showing video');
-        // Force remount the video player with a new key
-        setEnableVideoAudio(true);
-        setVideoKey(prev => prev + 1);
-        setShowVideo(true);
-        return;
-      }
-      
-      if (videoUrl) {
-        console.log('[ICS_C] Opening lightbox for video');
-        openLightbox(videoUrl);
-      } else {
-        const targetKey = cubeToFlyTarget[index];
-        console.log('[ICS_C] Target key:', targetKey);
-        
-        if (targetKey && CAMERA_SETTINGS.FLY_TARGETS[targetKey]) {
-          console.log('[ICS_C] Found fly target:', CAMERA_SETTINGS.FLY_TARGETS[targetKey]);
-          cameraControllerRef.current?.flyToTarget(CAMERA_SETTINGS.FLY_TARGETS[targetKey]);
-        } else {
-          console.log('[ICS_C] No fly target found for cube:', index);
-        }   
-        if (videoUrl) {
-          setPlayingVideo({ index, url: videoUrl }); // Trigger video plane  
-        } else { 
-          const targetKey = cubeToFlyTarget[index];
-          if (targetKey && CAMERA_SETTINGS.FLY_TARGETS[targetKey]) {
-            cameraControllerRef.current?.flyToTarget(CAMERA_SETTINGS.FLY_TARGETS[targetKey]);
-          }
-    
-          setSelectedCube(index); // Show UI panel for non-video cubes
-    
-        }
-      }
-    
-      };
+      setSelectedCube(index);
+      // Lightbox functionality kept but not triggered here
+    };
 
     const handleCloseEditor = () => {
       setSelectedCube(null)
     }
 
-    const handleVideoClose = () => {
-      setPlayingVideo(null);
-    };
-  
-      // Keep only ONE declaration of handleLanguageSwitcheroo inside the component
-      const handleLanguageSwitcheroo = (targetLang) => {
-        if (targetLang) {
-          setActiveLanguage(targetLang); // Direct set if target specified
-        } else {
-          setActiveLanguage(prev => 
-            prev === 'en' ? 'de' : 
-            prev === 'de' ? 'fr' : 
-            'en'
-          );
-        }
-      };
-  
     const handleLanguageSwitch = () => {
       setActiveLanguage(prev => 
         prev === 'en' ? 'de' : 
@@ -811,18 +1071,7 @@ const openLightbox = (content, type = 'image') => {
   }
 
  
-  const calculatePanelPosition = (el, camera, size) => {
-    const isMobile = window.innerWidth < MOBILE_BREAKPOINT;
-    const panelWidth = calculateEditorWidth().replace('px', '');
-    
-    if (isMobile) {
-      // For mobile, keep existing logic
-      return [size.width / 2 - 230, 40];
-    } else {
-      // For desktop/tablet, center precisely
-      return [size.width / 2 - panelWidth / 2, 40];
-    }
-  };
+
   
 
   const closeLightbox = () => {
@@ -852,69 +1101,67 @@ const openLightbox = (content, type = 'image') => {
     return () => clearTimeout(timer);
   }, []);
 
-
-
   const getCubeTextsForLanguage = (lang) => {
-    if (lang === 'de') return germanCubes;
-    if (lang === 'fr') return frenchCubes;
-    return englishCubes;
+    if (lang === 'de') return initialCubeTexts2;
+    if (lang === 'fr') return initialCubeTexts3;
+    return initialCubeTexts;
   };
 
   const cubeTexts = getCubeTextsForLanguage(activeLanguage);
 
     return (
-      <group >
+      <group>
     
           <CubeLayout onCubeSelect={handleCubeSelect} activeLanguage={activeLanguage} />
-          
-        
 
           {/* Editor UI */}
           {(!panelRemoved && selectedCube !== null) && (
             <Html
-                
                 className="html-panel"
-                calculatePosition={calculatePanelPosition}
+                calculatePosition={(el, camera, size) => {
+                const isMobile = window.innerWidth < MOBILE_BREAKPOINT;
+                return [isMobile ? size.width / 2 - 230 : size.width / 2 - 235, 20];
+                }}
                 style={{
-                  width: calculateEditorWidth(),
-                  pointerEvents: lightboxOpen ? 'none' : 'auto',
-                  touchAction: lightboxOpen ? 'none' : 'auto',
-                  zIndex: 1000,
-                  transition: 'opacity 1.5s ease-in-out, width 0.3s ease',
-                  opacity: selectedCube !== null ? 1 : 0
+                width: '420px',
+                pointerEvents: lightboxOpen ? 'none' : 'auto', // Disable interactions when fading
+                touchAction: lightboxOpen ? 'none' : 'auto',
+                zIndex: 1000,
+                transition: 'opacity 1.5s ease-in-out',
+                opacity: selectedCube !== null ? 1 : 0 // Fade out when selectedCube is null
                 }}
             >
  
-            <div  
-             style={{
-              position: 'relative',
-              top: '0',
-              left: '50%',
-              transform: 'translate(-50%, 0)',
-              width: '100%',
-              pointerEvents: 'auto',
-              touchAction: 'auto',
-              margin: '0 20px',
-              padding: '20px',
-              zIndex: 1000,
-            }}
+            <div 
+               style={{
+                 position: 'relative',
+                 top: '0',
+                 left: '50%',
+                 transform: 'translate(-50%, 0)',
+                 width: '420px',
+                 pointerEvents: 'auto',
+                 touchAction: 'auto',
+                 margin: '0 20px',
+                 padding: '20px',
+                 zIndex: 1000,
+               }}
              >
                <div 
-             style={{
-              background: '#15171c',
-              padding: '20px',
-              borderRadius: '11px',
-              boxShadow: '0 4px 20px rgba(0,0,0,0.8)',
-              color: '#e0e0e0',
-              width: '100%',
-              maxHeight: '80vh',
-              display: 'flex',
-              fontFamily: 'InterDisplay-ExtraLight, sans-serif',
-              flexDirection: 'column',
-              pointerEvents: 'auto',
-              touchAction: 'auto',
-              zIndex: 1000,
-              WebkitTapHighlightColor: 'transparent',
+                 style={{
+                   background: '#15171c',
+                   padding: '20px',
+                   borderRadius: '11px',
+                   boxShadow: '0 4px 20px rgba(0,0,0,0.8)',
+                   color: '#e0e0e0',
+                   width: '100%',
+                   maxHeight: '80vh',
+                   display: 'flex',
+                   fontFamily: 'InterDisplay-ExtraLight, sans-serif',
+                   flexDirection: 'column',
+                   pointerEvents: 'auto',
+                   touchAction: 'auto',
+                   zIndex: 1000,
+                   WebkitTapHighlightColor: 'transparent',
                  }}
                  onClick={(e) => e.stopPropagation()}
                  onTouchStart={(e) => e.stopPropagation()}
@@ -935,7 +1182,7 @@ const openLightbox = (content, type = 'image') => {
                       <div 
                         onClick={handleLanguageSwitch}
                         style={{ 
-                          fontSize: '0.0em', //Made it so small it aint there no more
+                          fontSize: '0.8em', 
                           color: '#fff', 
                           fontFamily: 'InterDisplay-ExtraLight, sans-serif',
                           marginLeft: '100px',
@@ -972,88 +1219,37 @@ const openLightbox = (content, type = 'image') => {
                         })}
                       </div>
                     </div>
-                 
+                    <div style={{ fontSize: '1.0em', color: '#aaa', fontFamily: 'InterDisplay-Bold, sans-serif', marginBottom: '22px',}}>
+                        {cubeTexts[selectedCube].bottomRightText}
+                      </div>
                     
                     {/* Text content with perfect paragraph handling */}
                     <div style={{
                       flex: 1,
                       overflowY: 'auto',
-                      paddingRight: '20px',
+                      paddingRight: '8px',
                       whiteSpace: 'pre-line',
                       wordWrap: 'break-word',
                       overflowWrap: 'break-word',
                       fontFamily: 'InterDisplay-ExtraLight, sans-serif',
-                      fontSize: '1.3em',
+                      fontSize: '1.2em',
                     }}>
-        {cubeTexts[selectedCube].description.split('\n\n').map((paragraph, i) => {
-    // Check if this cube has a video URL and the paragraph indicates a video
-    if (cubeTexts[selectedCube].videoUrl && paragraph.includes('Opens in a lightbox')) {
-      return (
-        <React.Fragment key={i}>
-          <p style={{ 
-            marginBottom: '1em',
-            lineHeight: '1.4'
-          }}>
-            {paragraph.replace('Opens in a lightbox.', '')}
-          </p>
-          <div style={{
-            width: '100%',
-            marginBottom: '1em',
-            maxHeight: '300px',
-            overflow: 'hidden'
-          }}>
-               <div style={{ fontSize: '1.2em', color: '#aaa', fontFamily: 'InterDisplay-Bold, sans-serif', marginBottom: '22px',}}>
-                        {cubeTexts[selectedCube].bottomRightText}
-                      </div>
-                      {/* Video section - conditionally render if videoUrl exists */}
-                      {cubeTexts[selectedCube].videoUrl && (
-                        <div className="video-container" style={{
-                          width: '100%',
-                          marginBottom: '22px',
-                          maxHeight: '300px', // Adjust as needed
-                          overflow: 'hidden'
+                      {cubeTexts[selectedCube].description.split('\n\n').map((paragraph, i) => (
+                        <p key={i} style={{ 
+                          marginBottom: '1em',
+                          lineHeight: '1.5'
                         }}>
-                          <video 
-                            controls 
-                            playsInline
-                           src={cubeTexts[selectedCube].videoUrl}
-                           onClick={() => openLightbox(cubeTexts[selectedCube].videoUrl)}
-                            style={{
-                              width: '100%',
-                              maxWidth: '100%',
-                              height: 'auto',
-                              objectFit: 'contain'
-                            }}
-                            onTouchStart={(e) => e.stopPropagation()}
-                            onTouchMove={(e) => e.stopPropagation()}
-                            onTouchEnd={(e) => e.stopPropagation()}
-                            onWheel={(e) => e.stopPropagation()} 
-                          />
-                        </div>
-                      )}
-          </div>
-        </React.Fragment>
-      )
-    }
-                
-                // Regular paragraph rendering
-                return (
-                  <p key={i} style={{ 
-                    marginBottom: '1em',
-                    lineHeight: '1.4'
-                  }}>
-                     {parseTextWithTags(paragraph.replace('Opens in a lightbox.', ''))}
-                  </p>
-                )
-              })}
-            </div>
-                              
+                          {paragraph}
+                        </p>
+                      ))}
+                    </div>
+                  
                     {cubeTexts[selectedCube].images && (
                       <button
                         onClick={() => openLightbox(cubeTexts[selectedCube].images, 'image')}
                         style={{
                           width: '100%',
-                          padding: '22px',
+                          padding: '15px',
                           backgroundColor: '#f57500',
                           border: 'none',
                           borderRadius: '11px',
@@ -1084,7 +1280,6 @@ const openLightbox = (content, type = 'image') => {
                           setLightboxContent(url);
                           setLightboxType('iframe');
                           setLightboxOpen(true);
-                          setSelectedCube(null);
                         }}
                         style={{
                           width: '100%',
@@ -1148,7 +1343,7 @@ const openLightbox = (content, type = 'image') => {
                         handleCloseEditor();
                       }}
                       style={{ 
-                        marginTop: '11px',
+                        marginTop: '15px',
                         padding: '15px',
                         backgroundColor: '#404040',
                         border: 'none',
@@ -1161,7 +1356,6 @@ const openLightbox = (content, type = 'image') => {
                         pointerEvents: 'auto',
                         touchAction: 'auto',
                         WebkitTapHighlightColor: 'transparent',
-                        zIndex: '3000',
                       }}
                     >
                       Close
@@ -1185,10 +1379,6 @@ const openLightbox = (content, type = 'image') => {
             zIndex: 999999
           }}
           onClick={(e) => e.stopPropagation()} // Prevent click-through
-          onTouchStart={(e) => e.stopPropagation()}
-          onTouchMove={(e) => e.stopPropagation()}
-          onTouchEnd={(e) => e.stopPropagation()}
-          onWheel={(e) => e.stopPropagation()} 
         >
           <Lightbox 
             content={lightboxContent}
@@ -1198,39 +1388,6 @@ const openLightbox = (content, type = 'image') => {
           />
         </Html>
       )}
-            {/* Video Player Plane - playingVideo (on top) */}
-            {playingVideo && (
-              <group 
-                position={isMobile ? [0, 4.7, 0.1] : [0, 6, 1.5]}  // Slight Z-offset to be on top
-                rotation={isMobile ? [-Math.PI / 2.3, 0, -Math.PI / 2] : [-Math.PI / 2.37, 0, 0]} 
-                scale={isMobile ? [0.8, 0.8, 0.8] : [1, 1, 1]}
-              >
-                <VideoPlayerPlane
-                
-                  position={[0, 0, 0]}
-                  videoUrl2={videoUrl2}
-                  onClose={handleVideoClose}
-                  isPlaying={!!playingVideo}
-                />     
-              </group>
-            )}
-
-            {/* Video Player Plane - showVideo (whitebackground) */}
-            {showVideo && (
-              <group 
-                position={isMobile ? [0, 4.7, 0] : [0, 6, 1.5]} 
-                rotation={isMobile ? [-Math.PI / 2.3, 0, -Math.PI / 2] : [-Math.PI / 2.37, 0, 0]} 
-                scale={isMobile ? [0.8, 0.8, 0.8] : [1, 1, 1]}
-              >
-                <VideoPlayerPlane 
-                  key={`video-${videoKey}`}
-                  videoUrl2={videoUrl2}
-                  isPlaying={showVideo}
-                  onClose={handleVideoClose}
-                  resetTrigger={videoKey}
-                />
-              </group>
-            )}
        
       </group>
     );

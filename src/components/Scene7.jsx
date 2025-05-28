@@ -338,7 +338,7 @@ export default function Scene() {
       - A short but sweet description of the project was added for many projects. 
 
 
-      Opens in a new window.`, videoUrl: "https://www.jopl.de/2/new/Reel2025_A.mp4#t=0,loop"    },
+      Opens in a new window.`, videoUrl: "https://www.jopl.de/videos/Reeler_2025_Fader.mp4#t=0,loop"    },
     { topLeftText: `ANIMATION /
     HARDER`, bottomRightText: "MOTION REEL LONG", description: `Showreel showing 3D Motion-design, 2D Motion Design, 2D Text animation,  2D Character Animation in 3D Environments, IK Animation, basically the full sandwich, almost. 
 

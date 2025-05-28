@@ -68,7 +68,7 @@ GO SOFT`, bottomRightText: "MOTION REEL SHORT", description: `Showreel showing p
     - A short but sweet description of the project was added for many projects. 
 
     For the corporately obsessed.
-    Opens in a new window.`, videoUrl: "https://www.jopl.de/2/new/Reel2025_A.mp4#t=0,loop"    },
+    Opens in a new window.`, videoUrl: "https://www.jopl.de/videos/Reeler_2025_Fader.mp4#t=0,loop"    },
   { topLeftText: `ANIMATION /
 GO HARD`, bottomRightText: "MOTION REEL LONG", description: `Showreel showing 3D Motion-design, 2D Motion Design, 2D Text animation,  2D Character Animation in 3D Environments, IK Animation, basically the full sandwich, almost. 
 

@@ -110,7 +110,7 @@ export default function WideCube({ position = [0, 0, 0], height = 0.5, depth = 2
       {videoElement && (
         <mesh position={[0, height / 2 + TEXT_Y_OFFSET, 0]} rotation={[-Math.PI / 2, 0, 0]}>
           <planeGeometry args={[WIDE_CUBE_WIDTH, depth]} />
-          <VideoGammaMaterial map={new THREE.VideoTexture(videoElement)} gamma={1.5} />
+          <VideoGammaMaterial map={new THREE.VideoTexture(videoElement)} gamma={1.8} />
         </mesh>
       )}
       {/* Purple fallback if no videoUrl */}

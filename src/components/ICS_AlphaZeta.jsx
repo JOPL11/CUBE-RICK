@@ -44,7 +44,7 @@ Spoken languages are English, German, Spanish and French. Canada / EU dual citiz
   topLeftText: "ART-DIRECTION", 
   bottomRightText: "GALLERY", 
   htmlUrl: "https://www.jopl.de/2/portfolio-main.html",
-  videoUrl: "https://www.jopl.de/2/new/Reel2025_A.mp4" ,
+  videoUrl: "https://www.jopl.de/videos/Reeler_2025_Fader.mp4" ,
   description: `I create and implement visual concepts, from original designs to refining existing CI/CD systems, with expertise in animation and interactive development. 3+ years management experience.
 
 15+ years collaborating with agencies, in-house teams, and startups - balancing innovation with brand 
@@ -343,7 +343,7 @@ const initialCubeTexts3 = [
   15+ ans de collaboration avec des agences, des équipes internes et des startups - 
   alliant innovation et conformité à l'identité de marque, tout en garantissant une 
   cohérence visuelle sur tous les livrables.`, htmlUrl: "https://www.jopl.de/2/portfolio-main.html",
-  videoUrl: "https://www.jopl.de/2/new/Reel2025_A.mp4" },
+  videoUrl: "https://www.jopl.de/videos/Reeler_2025_Fader.mp4" },
   { topLeftText: "AFTER EFFECTS / CINEMA4D", bottomRightText: "APERÇU TECHNIQUE", description: `Compétences en Motion :
   
       Modélisation 3D
@@ -377,7 +377,7 @@ const initialCubeTexts3 = [
   du concept visuel → création d'assets 2D/3D → design d'interface → rendu → montage → postproduction.
   
   (Ouvre dans une nouvelle fenêtre.)`,  htmlUrl: "https://www.jopl.de/2/portfolio-main.html",
-  videoUrl: "https://www.jopl.de/2/new/Reel2025_A.mp4" },
+  videoUrl: "https://www.jopl.de/videos/Reeler_2025_Fader.mp4" },
     { topLeftText: `MOTION RAPIDE`, bottomRightText: "(Version courte)", description: `Showreel de motion design 3D pur :
       Ce showreel 3D présente des projets réalisés pour les marques identifiées par leurs logos. Des notices descriptives accompagnent les principaux travaux.
   

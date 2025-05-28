@@ -14,7 +14,7 @@ const Scene = dynamic(() => import('@/components/Scene5').then(mod => mod.defaul
       backgroundColor: '#000',
       color: '#fff'
     }}>
-      Loading 3D Scene...
+      ...
     </div>
   )
 })

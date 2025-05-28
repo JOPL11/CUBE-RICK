@@ -38,10 +38,12 @@ export const CAMERA_SETTINGS = {
   
   // Fly targets for cube buttons
   FLY_TARGETS: {
-    button3: {
+    button4: {
+      
       z: 200,
       duration: 2,
       lookAtY: 8
     }
   }
+  
 };

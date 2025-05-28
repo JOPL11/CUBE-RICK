@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "next build && node seo-injector.cjs",
     "start": "next start",
     "lint": "next lint"
   },
@@ -20,6 +20,7 @@
     "next": "15.3.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-youtube": "^10.1.0",
     "three": "^0.175.0"
   },
   "devDependencies": {

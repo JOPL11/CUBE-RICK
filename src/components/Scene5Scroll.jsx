@@ -1,44 +1,34 @@
 'use client'
 import { useState, useEffect, useRef, Suspense, useContext } from 'react'
-import { Canvas, useThree } from '@react-three/fiber'
-import { Environment, Loader, OrbitControls, MapControls, ScrollControls, useScroll } from '@react-three/drei'
-import AntiWPSplash from './AntiWPSlash3'
+import { Canvas, useThree, useFrame } from '@react-three/fiber'
+import { Environment, Loader, OrbitControls, MapControls, ScrollControls, useScroll, Scroll} from '@react-three/drei'
+import AntiWPSplash from './AntiWPSlash2'
 import InteractiveCubesScene from './ICS_C'
 import RedDot from './RedDot4'
-import DecorativeCubes2 from './DecorativeCubes_2'
+import DecorativeCubes from './DecorativeCubes_2'
 import Header from './Header'
 import BackgroundColor from './BackgroundColor'
 import { ThemeContext } from './Header'
 import { theme } from '../config/theme'
-import { CAMERA_SETTINGS } from '../config/cameraSettings'
-import CameraController from './CameraController' 
 
-function CameraModeController({ isMapMode }) {
+function CameraController({ isMapMode }) {
   const { camera } = useThree()
   const controlsRef = useRef()
 
   useEffect(() => {
     if (!camera) return
     
-    console.log('[CameraModeController Function] Camera settings applied:', {
+    console.log('Camera settings applied:', {
       position: camera.position,
       mode: isMapMode ? 'Map Mode' : 'Orbit Mode'
     })
     camera.position.set(
-      isMapMode ? 0 : 7, 
-      isMapMode ? 12 : 2, 
-      isMapMode ? 3 : 5)
-    camera.lookAt(0, 0, 5)
+      isMapMode ? 0 : 9, 
+      isMapMode ? 12 : 8, 
+      isMapMode ? 0 : 9)
+    camera.lookAt(0, 0, 0)
     camera.updateProjectionMatrix()
-      // Log controls setup
-      if (isMapMode) {
-        console.log('[CameraModeController Function] Setting up MapControls')
-        // ... rest of controls setup
-      } else {
-        console.log('[CameraModeController Function] Setting up OrbitControls')
-        // ... rest of controls setup
-      }
-    }, [camera, isMapMode])
+  }, [camera, isMapMode])
 
   return (
     <>
@@ -69,17 +59,14 @@ function CameraModeController({ isMapMode }) {
 }
 
 export default function Scene() {
-  const [darkMode, setDarkMode] = useState(true)
+  const [darkMode, setDarkMode] = useState(false)
   const [isMapMode, setIsMapMode] = useState(true)
   const [isMobile, setIsMobile] = useState(false)
-  const cameraControllerRef = useRef(null);
   const [activeLanguage, setActiveLanguage] = useState(() => {
     // Retrieve language from localStorage, default to 'en' if not set
-  //  const savedLanguage = localStorage.getItem('preferredLanguage');
-  //  console.log('Initial Language from localStorage:', savedLanguage);
-  //  return savedLanguage || 
-  // 'en';
-  return 'en';
+    const savedLanguage = localStorage.getItem('preferredLanguage');
+    console.log('Initial Language from localStorage:', savedLanguage);
+    return savedLanguage || 'en';
   });
 
   const MOBILE_BREAKPOINT = 768
@@ -119,8 +106,8 @@ export default function Scene() {
     setActiveLanguage(normalizedLang);
     console.log('Active Language Set:', normalizedLang);
     
-    //localStorage.setItem('preferredLanguage', normalizedLang);
-    //console.log('Stored Language in localStorage:', localStorage.getItem('preferredLanguage'));
+    localStorage.setItem('preferredLanguage', normalizedLang);
+    console.log('Stored Language in localStorage:', localStorage.getItem('preferredLanguage'));
     
     console.groupEnd();
   };
@@ -146,8 +133,11 @@ export default function Scene() {
           camera={{ fov: 50, near: 0.1, far: 1000 }}
           dpr={[1, 2]}
         >
-          <ScrollControls pages={0} enabled={isMapMode}>
-            <SceneContents isMapMode={isMapMode} darkMode={darkMode}  activeLanguage={activeLanguage}/>
+          <ScrollControls pages={3} enabled={isMapMode}>
+            <SceneContents 
+            isMapMode={isMapMode} 
+            darkMode={darkMode}  
+            activeLanguage={activeLanguage}/>
           </ScrollControls>
         </Canvas>
         <Loader />
@@ -156,11 +146,26 @@ export default function Scene() {
   )
 }
 
-function SceneContents({ isMapMode, darkMode, activeLanguage, cameraControllerRef }) {
+function SceneContents({ isMapMode, darkMode, activeLanguage  }) {
+  const scroll = useScroll();
+  const { camera } = useThree();
+
+  useFrame(() => {
+    if (isMapMode && scroll) {
+      // Calculate scroll progress (0 to 1)
+      const scrollProgress = scroll.offset;
+      
+      // Map scroll progress to camera movement
+      // Assuming sections are at z positions: 11, 22, 33
+      const targetZ = 11 + scrollProgress * 22;
+      
+      camera.position.z = targetZ;
+      camera.lookAt(0, 0, targetZ);
+    }
+  });
   return (
     <>
-      <CameraModeController isMapMode={isMapMode} />
-      <CameraController isMapMode={isMapMode} ref={cameraControllerRef}/>
+      <CameraController isMapMode={isMapMode} />
       <BackgroundColor darkMode={darkMode} />
       <ambientLight intensity={darkMode ? theme.dark.ambientIntensity : theme.light.ambientIntensity} />
       <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={darkMode ? theme.dark.spotIntensity : theme.light.spotIntensity} />
@@ -169,9 +174,17 @@ function SceneContents({ isMapMode, darkMode, activeLanguage, cameraControllerRe
       <Suspense fallback={null}>
         <Environment files="/images/kloppenheim_02_puresky_1k.hdr" background={false} />
         <RedDot />
-        <InteractiveCubesScene isMapMode={isMapMode} activeLanguage={activeLanguage} cameraControllerRef={cameraControllerRef}  />
-        <DecorativeCubes2 color={'#ffffff'} />
-
+        <InteractiveCubesScene isMapMode={isMapMode} activeLanguage={activeLanguage}/>
+        <DecorativeCubes color={'#ffffff'} />
+        <Scroll>
+        <Section position={[0, 1, 11]} color={darkMode ? theme.dark.sectionColor : theme.light.sectionColor} />
+        </Scroll>
+        <Scroll>
+        <Section position={[0, 1, 22]} color={darkMode ? theme.dark.sectionColor : theme.light.sectionColor} />
+        </Scroll>
+        <Scroll>
+        <Section position={[0, 1, 33]} color={darkMode ? theme.dark.sectionColor : theme.light.sectionColor} />
+        </Scroll>
       </Suspense>
     </>
   )
@@ -180,9 +193,9 @@ function SceneContents({ isMapMode, darkMode, activeLanguage, cameraControllerRe
 function Section({ position, color }) {
   return (
     <group position={position}>
-      <mesh>
-        <boxGeometry args={[10, 5, 0.1]} />
-        <meshBasicMaterial color={color} />
+      <mesh rotation={[Math.PI / 2, 0, 0]}>
+        <boxGeometry args={[10, 7, 1]} />
+        <meshStandardMaterial color={color} />
       </mesh>
     </group>
   )

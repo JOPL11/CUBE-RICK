@@ -1,11 +1,22 @@
 'use client'
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState, useRef, useMemo } from 'react'
 import { createPortal } from 'react-dom'
 
 export default function Lightbox({ isOpen, onClose, content }) {
   const [portalContainer, setPortalContainer] = useState(null)
+  const [isLoading, setIsLoading] = useState(true)
+  const videoRef = useRef(null)
   const iframeRef = useRef(null)
   const overlayRef = useRef(null)
+
+   // Add loading state management
+   useEffect(() => {
+    setIsLoading(true)
+    // Simulate or actual content loading logic
+    const timer = setTimeout(() => setIsLoading(false), 500)
+    return () => clearTimeout(timer)
+  }, [content])
+
 
   useEffect(() => {
     if (!isOpen) return
@@ -19,17 +30,54 @@ export default function Lightbox({ isOpen, onClose, content }) {
     }
   }, [isOpen])
 
+    // Add video autoplay and mobile handling
+    useEffect(() => {
+      if (!isOpen || !videoRef.current) return
+  
+      const videoElement = videoRef.current
+      
+      // Attempt to play video with various mobile-friendly approaches
+      const playVideo = async () => {
+        try {
+          // Muted autoplay is more likely to work on mobile
+          videoElement.muted = true
+          videoElement.autoplay = true
+          
+          // Attempt different play methods
+          await videoElement.play()
+        } catch (error) {
+          console.warn('Autoplay failed:', error)
+          // Fallback: remove mute and try again
+          videoElement.muted = false
+          try {
+            await videoElement.play()
+          } catch (fallbackError) {
+            console.error('Video play failed:', fallbackError)
+          }
+        }
+      }
+  
+      playVideo()
+    }, [isOpen])
+
   // Double security - block all pointer events except for the iframe
   useEffect(() => {
     if (!isOpen || !overlayRef.current) return
     
     const handlePointerDown = (e) => {
-      // Only allow events that originate from the iframe
-      if (!iframeRef.current?.contains(e.target)) {
-        e.preventDefault()
-        e.stopPropagation()
-      }
+      const isVideoControlTarget = 
+      videoRef.current?.contains(e.target) && 
+      (e.target.tagName === 'VIDEO' || 
+       e.target.closest('.video-controls') || 
+       e.target.matches('input[type="range"]'))
+
+    if (!iframeRef.current?.contains(e.target) && 
+        !isVideoControlTarget && 
+        !e.target.closest('button')) {
+      e.preventDefault()
+      e.stopPropagation()
     }
+  }
 
     overlayRef.current.addEventListener('pointerdown', handlePointerDown, true)
     return () => {
@@ -38,6 +86,46 @@ export default function Lightbox({ isOpen, onClose, content }) {
   }, [isOpen])
 
   if (!isOpen || !portalContainer) return null
+
+   // Determine content type and render accordingly
+   const renderContent = () => {
+    // Check if content is a video URL
+    const isVideoContent = content.match(/\.(mp4|webm|ogg)$/i)
+    
+    if (isVideoContent) {
+      return (
+        <video
+          ref={videoRef}
+          src={content}
+          style={{
+            width: '100%',
+            height: '100%',
+            objectFit: 'contain',
+            pointerEvents: 'none'
+          }}
+          playsInline
+          controls
+          className="no-volume-control"
+        />
+      )
+    }
+    
+    // Fallback to iframe for non-video content
+    return (
+      <iframe
+        ref={iframeRef}
+        src={content}
+        style={{
+          width: '100%',
+          height: '100%',
+          border: 'none',
+          pointerEvents: 'auto',
+          borderRadius: '8px'
+        }}
+        allow="autoplay; pointer-events"
+      />
+    )
+  }
 
   return createPortal(
 <div 
@@ -63,6 +151,7 @@ export default function Lightbox({ isOpen, onClose, content }) {
       position: 'absolute',
       top: 0,
       left: 0,
+      borderRadius: '8px',
       right: 0,
       bottom: 0,
       backgroundColor: 'rgba(0,0,0,0.9)',
@@ -72,11 +161,11 @@ export default function Lightbox({ isOpen, onClose, content }) {
   />
   
   {/* Simplified content area */}
-  <div style={{
+  <div id="main-content-container" style={{
     position: 'relative',
     width: '90%',
     height: '90%',
-    maxWidth: '1200px',
+    maxWidth: '1800px',
     maxHeight: '90vh',
     pointerEvents: 'none' // Container won't block by default
   }}>
@@ -88,6 +177,7 @@ export default function Lightbox({ isOpen, onClose, content }) {
         height: '100%',
         border: 'none',
         pointerEvents: 'auto', // Only the iframe is interactive
+        borderRadius: '8px'
       }}
       allow="pointer-events"
     />
@@ -97,7 +187,7 @@ export default function Lightbox({ isOpen, onClose, content }) {
       style={{
         position: 'absolute',
         top: 20,
-        right: 40,
+        right: 20,
         background: 'rgba(0,0,0,0.5)',
         border: 'none',
         color: 'white',

@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!--=============== basic  ===============-->
+    <meta charset="UTF-8" />
+    <title>Jan Peiro Code / Design / Visualization</title>
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="keywords" content="" />
+    <meta name="description" content="" />
+    <!--=============== css  ===============-->
+    <link type="text/css" rel="stylesheet" href="css/plugins.css" />
+    <link type="text/css" rel="stylesheet" href="css/style.css?version=<?php echo time(); ?>" />
+    <link type="text/css" rel="stylesheet" href="css/color.css" />
+    <!--=============== favicons ===============-->
+    <link rel="shortcut icon" href="images/favicon.ico" />
+  </head>
+  <body>
+    <!-- loader   -->
+    <div class="loader">
+      <div class="loading-text-container">
+        <span class="loading-text">Loading</span>
+        <span class="loader_count">0</span>
+      </div>
+      <div class="loader-anim"></div>
+      <div class="loader-anim2 color-bg"></div>
+    </div>
+    <!-- loader  end-->
+    <!-- main start -->
+    <div id="main">
+      <!-- header-->
+      <header class="main-header">
+        <!-- logo  -->
+        <a href="https://www.jopl.de" target="_blank" class="logo-holder">
+          <div id="topLogo"></div>
+          <div>
+            <img
+              id="jp"
+              src="images/jp.png"
+              style="position: absolute; width: 60px; height: 37px"
+              alt=""/>
+          </div>
+          <div>
+            <img
+              id="bg2"
+              src="images/logobg2.jpg"
+              style="
+                position: absolute;
+                border-radius: 7px;
+                width: 60px;
+                height: 37px;
+              "
+              alt=""
+            />
+          </div>
+
+          <div>
+            <img
+              id="gasp1"
+              src="images/logogasp.png"
+              style="position: absolute; width: 6px; height: auto"
+              alt=""
+            />
+          </div>
+          <div>
+            <img
+              id="gasp2"
+              src="images/logogasp.png"
+              style="position: absolute; width: 6px; height: auto"
+              alt=""
+            />
+          </div>
+          <div>
+            <img
+              id="gasp3"
+              src="images/logogasp.png"
+              style="position: absolute; width: 6px; height: auto"
+              alt=""
+            />
+          </div>
+
+          <div>
+            <img
+              id="gear"
+              src="images/logogear.png"
+              style="
+                position: absolute;
+                border-radius: 8px;
+                width: 15px;
+                height: 15px;
+              "
+              alt=""
+            />
+          </div>
+          <div>
+            <img
+              id="logohead"
+              src="images/logobg.jpg"
+              style="border-radius: 7px; width: 60px; height: 37px"
+              alt=""
+            />
+          </div>
+        </a>
+        <!-- logo end -->
+        <!-- nav-button-wrap-->
+        <!-- nav-button-wrap end-->
+        <!-- header-contacts-->
+        <div class="header-contacts">
+          <ul>
+            <li id="fuggr"></li>
+          </ul>
+        </div>
+        <!-- header-contacts end-->
+      </header>
+      <!-- header end-->
+      <!-- right header-->
+      <div class="hc_dec_color">
+        <div class="page-subtitle"><span></span></div>
+      </div>
+      <!-- right header end-->
+      <!-- wrapper  -->
+      <div id="wrapper">
+        <!-- navigation menu-->
+        <div class="nav-holder">
+          <div class="nav-holder-wrap but-hol">
+            <div class="nav-container fl-wrap">
+              <!-- nav -->
+              <nav class="nav-inner" id="menu">
+                <ul>
+    		<li><a href="https://www.jopl.de" target="_blank">Home</a></li>
+		<li><a href="reel.html" class="ajax">Reel</a></li>
+
+                  <li><a href="about.html" class="ajax">About</a></li>
+                  <li><a href="portfolio-main.html" class="ajax">Commercial Work</a></li>
+                   <li><a href="experiments.html" class="ajax">WebGL Demos</a></li>
+                  <li><a href="contact.html" class="ajax">Contact</a></li>
+                  <li><a href="impressum.html" class="ajax">Impressum</a></li>
+                </ul>
+              </nav>
+              <!-- nav end-->
+            </div>
+            <div class="nav-footer">
+              <span></span>
+            </div>
+            <div class="nav-holder-wrap_line"></div>
+            <div class="nav-holder-wrap_dec"></div>
+          </div>
+        </div>
+        <div class="nav-overlay"></div>
+        <!-- navigation menu end  -->
+        <!-- content-->
+        <div style="position: absolute; left: -9999px;" id="blackdialer">
+            <video controls loop playsinline muted autoplay>
+              <source src="new/Reel2025_A.mp4" type="video/mp4">
+              Your browser does not support HTML5 video.
+            </video>
+          </div>
+	<div style="display: none" id="ae">
+          <video
+            class="lg-video-object lg-html5"
+            controls
+            poster="images/folio/1.jpg"
+            loop
+            allowFullscreen
+            preload="auto"
+            playsInline
+            webkit-playsInline
+            onplay="this.webkitEnterFullscreen();"
+            onpause="this.webkitExitFullscreen();">
+            <source src="video/AE2.mp4" muted autoplay="true" type="video/mp4" />
+            Your browser does not support HTML5 video.
+          </video>
+        </div>
+
+        <div style="position: absolute; left: -9999px;" id="extended">
+            <video controls loop playsinline muted autoplay>
+              <source src="video/reel.mp4" type="video/mp4">
+              Your browser does not support HTML5 video.
+            </video>
+          </div>
+        <div class="content full-height" data-pagetitle="Home slider">
+          <div class="fl-wrap full-height hero-conatiner">
+            <div class="hero-wrapper fl-wrap full-height hidden-item">
+              <span class="hc_dec"></span>
+              <!-- fs-slider-wrap  -->
+              <!-- hero-slider-wrap -->
+              <div
+                class="hero-slider-wrap reel-half-slider fl-wrap full-height">
+                <div class="hero-slider fs-gallery-wrap fl-wrap full-height">
+                  <div class="swiper-container">
+                    <div class="swiper-wrapper">
+                      <!-- swiper-slide-->
+                      <div class="swiper-slide">
+                        <div class="half-hero-wrap">
+                          <div class="hhw_header"></div>
+                          <div class="hhw_header2"><span style="color: #ffffff">
+                            N.264 </span><span style="color: #000000"></span>
+                          </div>
+                          <h1><span style="color: #ffffff">Motion</span><span style="color: #000000"><br>reel</h1></span>
+           		  <div class="hhw_header2">
+                            <span style="color: #000000"><br>Cinema 4D, After Effects<br>
+                           Motion Design</span>
+                          </div>
+                          <div class="clearfix"></div>
+                          <div
+                            class="dynamic-gal btn ajax fl-btn color-bg" style="cursor: pointer; background: #000000"
+                            data-dynamicPath="[ {'html': '#blackdialer'}]">
+                            <span>Quickview</span>
+                          </div> <br /> <br /> <br />
+                          <div
+                            class="dynamic-gal btn ajax fl-btn color-bg" style="cursor: pointer; background: #000000"
+                            data-dynamicPath="[ {'html': '#extended'}]">
+                            <span>Extended&nbsp;</span>
+                          </div>
+			  <br> <br><br>
+                          <div
+                            class="dynamic-gal btn ajax fl-btn color-bg" style="cursor: pointer; background: #000000"
+                            data-dynamicPath="[ {'html': '#ae'}]">
+                            <span>After Effects 2D</span>
+                          </div>
+			  <br> <br><br>
+
+
+                        </div>
+                      </div>
+                      <!-- swiper-slide end  -->
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- hero-slider-wrap  end-->
+              <!-- hero-slider-img -->
+              <div class="hero-slider-img hero-slider-wrap_halftwo hidden-item">
+                <div class="swiper-container">
+                  <div class="swiper-wrapper">
+                    <!-- swiper-slide images/AirbusCover6.jpg images/mercedes/merc77.jpg AirbusCover6.jpg   -->
+                    <div class="swiper-slide">
+                      <div
+                        class="bg"
+                        data-bg="images/ReelerBG3.jpg"
+                        data-swiper-parallax="40%"
+                      ></div>
+                      <div class="overlay3"></div>
+                    </div>
+                    <!-- swiper-slide end-->     
+                  </div>
+                </div>
+              </div>
+              <!-- hero-slider-img  end-->
+              <!-- bottom left page number -->
+              <div class="clone-counter">
+                <div class="current">1</div>
+              </div>
+              <!-- top left page number
+              <div class="swiper-counter hs_counter">
+                <div class="current" style="user-select: none;">1</div>
+                <div class="total" style="user-select: none;"></div>
+              </div> -->
+              <!-- slider-controls end-->
+            </div>
+            <!-- hero-container end-->
+          </div>
+        </div>
+        <!-- content end -->
+      </div>
+      <!-- wrapper end -->
+    </div>
+    <!-- Main end -->
+    <!--=============== scripts  ===============-->
+    <script src="js/jquery.min.js"></script>
+    <script src="js/plugins.js"></script>
+    <script src="js/scripts.js"></script>
+    <script src="gsap/src/index.js"></script>
+    <script src="gsap/src/TextPlugin.js"></script>
+    <script src="js/nerdRage.js"></script>
+<script>
+    $(document).on("ajaxComplete", function(event, xhr, settings) {
+        let pageTitles = {
+	    "index2.html": "HOME",
+            "about.html": "ABOUT",
+            "portfolio-main.html": "COMMERCIAL WORK SAMPLES",
+            "experiments.html": "CODE EXPERIMENTS",
+            "playground.html": "VISUALIZATION PLAYGROUND",
+            "contact.html": "CONTACT",
+            "impressum.html": "IMPRESSUM"
+        };
+
+        let currentPage = settings.url.split("/").pop(); // Extracts filename
+        $("#fuggr").text(pageTitles[currentPage] || ""); // Updates the header or clears it
+    });
+</script>
+  </body>
+</html>

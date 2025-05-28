@@ -89,7 +89,7 @@ export default function WideCube({
       <mesh position={[0, height/2 + 0.001, 0]} rotation={[-Math.PI/2, 0, 0]}>
         <planeGeometry args={[WIDE_CUBE_WIDTH, depth]} />
         {videoElement ? (
-          <VideoGammaMaterial map={new THREE.VideoTexture(videoElement)} />
+          <VideoGammaMaterial map={new THREE.VideoTexture(videoElement)} gamma={1.2} />
         ) : (
           <meshStandardMaterial color={color} />
         )}

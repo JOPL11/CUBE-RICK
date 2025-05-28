@@ -13,36 +13,45 @@ const debugLog = (message) => {
   window.cameraDebug.push(message);
 };
 
-const CameraController = forwardRef(({ onStateChange }, ref) => {
-  const { camera, controls } = useThree();
+const CameraController = forwardRef(({ isMapMode }, ref) => {
+  const { camera } = useThree();
   
-  // [Original camera implementation]
-  const animateToTopDown = () => {
-    if (!camera) return;
-    
-    gsap.to(camera.position, {
-      y: CAMERA_SETTINGS.topDown.positionY,
-      duration: CAMERA_SETTINGS.topDown.transitionDuration,
-      ease: "power2.inOut",
-      onUpdate: () => camera.lookAt(0, CAMERA_SETTINGS.topDown.lookAtY, 0)
-    });
-  };
-
-  const flyToTarget = (target) => {
-    if (!camera) return;
-    
-    gsap.to(camera.position, {
-      y: CAMERA_SETTINGS.topDown.positionY,
-      z: target.z,
-      duration: target.duration,
-      ease: "power2.inOut",
-      onUpdate: () => camera.lookAt(0, target.lookAtY, 0)
-    });
-  };
-
+  console.log('[CameraController Component] Component mounted', {
+    camera: !!camera,
+    isMapMode
+  });
+  
   useImperativeHandle(ref, () => ({
-    animateToTopDown,
-    flyToTarget
+    flyToTarget: (target) => {
+      console.log('[CameraController Component] Fly to target called:', {
+        target,
+        camera: !!camera
+      });
+      
+      if (!camera) {
+        console.log('[CameraController Component] Camera not available');
+        return;
+      }
+      
+      console.log('[CameraController Component] Starting animation:', {
+        from: camera.position,
+        to: {
+          z: target.z,
+          y: CAMERA_SETTINGS.topDown.positionY
+        }
+      });
+      
+      gsap.to(camera.position, {
+        y: CAMERA_SETTINGS.topDown.positionY,
+        z: target.z,
+        duration: target.duration,
+        ease: "power2.inOut",
+        onUpdate: () => {
+          console.log('[CameraController Component] Camera position:', camera.position);
+          camera.lookAt(0, target.lookAtY, 0);
+        }
+      });
+    }
   }));
 
   return null;

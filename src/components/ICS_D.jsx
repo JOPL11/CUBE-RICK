@@ -1,8 +1,8 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react';
-import { useLoader } from '@react-three/fiber';
-import { Float, OrbitControls, Html, Text } from '@react-three/drei';
+import { useLoader, useFrame, useThree } from '@react-three/fiber';
+import { Float, OrbitControls, Html, Text, useScroll } from '@react-three/drei';
 import { TextureLoader } from 'three/src/loaders/TextureLoader';
 import gsap from 'gsap';
 import { 
@@ -10,9 +10,6 @@ englishCubes,
 germanCubes,
 frenchCubes,
 } from './cubeContent.js';
-import { CAMERA_SETTINGS } from '../config/cameraSettings';
-//import VideoPlayerPlane from './VideoPlayerPlane_nochrome';
-import VideoPlayerPlane from './YoutubePlane';
 
 const LanguageFloat = ({ children, index, activeLanguage }) => {
   const groupRef = useRef();
@@ -76,25 +73,6 @@ const LanguageFloat = ({ children, index, activeLanguage }) => {
             yoyo: true
           });
         }
-        else if (activeLanguage === 'en') {
-          // French - elegant wave
-          const phase = index * 0.35;
-          animationRef.current.pos = gsap.to(pos, {
-            y: baseY + 0.4 * Math.sin(phase),
-            duration: 7,
-            ease: "sine.inOut",
-            repeat: -1,
-            yoyo: true
-          });
-          animationRef.current.rot = gsap.to(rot, {
-            x: 0.5 * Math.sin(phase * -0.33),
-            z: 0.2 * Math.sin(phase * -0.5),
-            duration: 6,
-            ease: "sine.inOut",
-            repeat: -1,
-            yoyo: true
-          });
-        }
       }
     });
   }, [activeLanguage, index]);
@@ -113,24 +91,22 @@ const LanguageFloat = ({ children, index, activeLanguage }) => {
           {children}
         </Float>
       )}
-
     </group>
   );
 };
 
-import Cube from './Cube'
+import Cube from './Cube2'
 import WideCube from './WideCube_C';
 import Lightbox from './Lightbox'
 
-import { useThree } from '@react-three/fiber';
+
 
 const CUBE_SIZE = 2 // Size of each cube
 const CUBE_SPACING = 2.1 // Space between cube centers (almost touching)
 const CUBE_Y_POSITION = 0 // Consistent Y position for all cubes
 const MOBILE_BREAKPOINT = 768 // Width in pixels for mobile/desktop breakpoint
 const MOBILE_HORIZONTAL_SPACING = 1.05 // Adjusted horizontal spacing for mobile
-const TABLET_BREAKPOINT = 1024;
-const DESKTOP_BREAKPOINT = 1440;
+
 
   
 
@@ -190,6 +166,9 @@ const MobileWideCube = ({ position, text, text2, onClick }) => {
   )
 }
 
+
+
+
 const WideCube2 = ({ position, text, text2, onClick }) => {
   const width = CUBE_SPACING * 3.05;
   const height = CUBE_SIZE * 0.8;
@@ -239,13 +218,35 @@ const WideCube2 = ({ position, text, text2, onClick }) => {
   );
 };
 
-function CubeLayout({ onCubeSelect, activeLanguage,  onAboutClick}) {
+function CubeLayout({ onCubeSelect, activeLanguage, onCubeClick}) {
     const [isMobile, setIsMobile] = useState(false)
     const logoTexture = useLoader(TextureLoader, '/images/logo2.png')
     const shadowTexture = useLoader(TextureLoader, '/images/shadows.png')
     const [showImpressum, setShowImpressum] = useState(false);
     const [lightboxOpen, setLightboxOpen] = useState(false);
     const [lightboxContent, setLightboxContent] = useState(null);
+    const groupRef = useRef();      
+    
+
+    const sections = [
+        { position: [0, 0, 0], lookAt: [0, 0, 0] },
+        { position: [0, -10, 5], lookAt: [0, -10, 0] },
+        { position: [5, -20, 5], lookAt: [0, -20, 0] }
+      ]
+      useFrame(() => {
+        if (!isMapMode) return
+        
+        // Vertical scroll effect
+        const yOffset = scroll.offset * 30 // Adjust scroll speed
+        camera.position.set(0, 15 - yOffset, 3)
+        camera.lookAt(0, 15 - yOffset - 5, 0)
+        
+        if (groupRef.current) {
+          groupRef.current.position.y = yOffset
+        }
+      })
+    
+    
 
     useEffect(() => {
       const checkMobile = () => {
@@ -260,20 +261,11 @@ function CubeLayout({ onCubeSelect, activeLanguage,  onAboutClick}) {
       };
     }, [])
 
-    const handleAboutClick = () => {
-      console.log("About clicked")
-      onCubeSelect(1)
-      //setAboutOpen(!aboutOpen); // Toggles about panel
 
-      // Could also: scroll to about section, open modal, etc.
-    };
   
     const cubeTexts = activeLanguage === 'de' ? germanCubes : 
                      activeLanguage === 'fr' ? frenchCubes : 
                      englishCubes;
-
-
-                     // To open a video
 
 
    {/* ===================================== MOBILE STARTS HERE ============================================================*/}
@@ -364,7 +356,6 @@ function CubeLayout({ onCubeSelect, activeLanguage,  onAboutClick}) {
                 topLeftText={cubeTexts[3].topLeftText}
                 bottomRightText={cubeTexts[3].bottomRightText}
                 onClick={() => onCubeSelect(3)}
-               // onClick={() => openLightbox(cubeTexts[3].videoUrl)}
                 color="#3d3d3d"
                 videoUrl={cubeTexts[3].videoUrl}
                 scale={[1, 1, 1]}
@@ -382,8 +373,6 @@ function CubeLayout({ onCubeSelect, activeLanguage,  onAboutClick}) {
                 topLeftText={cubeTexts[4].topLeftText}
                 bottomRightText={cubeTexts[4].bottomRightText}
                 onClick={() => onCubeSelect(4)}
-               //onClick={() => openVideoLightbox(cubeTexts[4].videoUrl)}
-                //onClick={() => openLightbox(cubeTexts[4].videoUrl)}
                 color="#3d3d3d"
                 videoUrl={cubeTexts[4].videoUrl}
                 scale={[1, 1, 1]}
@@ -399,7 +388,6 @@ function CubeLayout({ onCubeSelect, activeLanguage,  onAboutClick}) {
                 topLeftText={cubeTexts[5].topLeftText}
                 bottomRightText={cubeTexts[5].bottomRightText}
                 onClick={() => onCubeSelect(5)}
-               
                 color={getCubeColor(5)}
                 videoUrl={cubeTexts[5].videoUrl}
                 scale={[1, 1, 1]}
@@ -426,15 +414,15 @@ function CubeLayout({ onCubeSelect, activeLanguage,  onAboutClick}) {
           </group>
           <group position={[MOBILE_HORIZONTAL_SPACING, CUBE_Y_POSITION, CUBE_SPACING * 2 + Z_OFFSET]}>
           
-            <LanguageFloat index={8} activeLanguage={activeLanguage}>
+            <LanguageFloat index={7} activeLanguage={activeLanguage}>
               <Cube 
-                key={`cube-${8}-${activeLanguage}`}
+                key={`cube-${7}-${activeLanguage}`}
                 position={[0, 0, 0]}
-                topLeftText={cubeTexts[8].topLeftText}
-                bottomRightText={cubeTexts[8].bottomRightText}
-                onClick={() => onCubeSelect(8)}
+                topLeftText={cubeTexts[7].topLeftText}
+                bottomRightText={cubeTexts[7].bottomRightText}
+                onClick={() => onCubeSelect(7)}
                 color="#3d3d3d"
-                videoUrl={cubeTexts[8].videoUrl}
+                videoUrl={cubeTexts[7].videoUrl}
                 scale={[1, 1, 1]}
                 rotation={[0, 0, 0]}
               />
@@ -489,6 +477,7 @@ function CubeLayout({ onCubeSelect, activeLanguage,  onAboutClick}) {
                 bottomRightText=""
                 onClick={() => {
                   onCubeSelect(0);
+                  onCubeClick(0);
                   console.log('WideCube clicked');
                 }}
                 color="#3d3d3d"
@@ -498,14 +487,22 @@ function CubeLayout({ onCubeSelect, activeLanguage,  onAboutClick}) {
           </group>
         {/* First row */}
         <group position={[-CUBE_SPACING, CUBE_Y_POSITION, -CUBE_SPACING]}>
-         
+            <group ref={groupRef}>
+            <mesh position={[0, 0, 0]}>
+        <boxGeometry args={[1, 1, 1]} />
+        <meshStandardMaterial color="white" />
+      </mesh>
+                </group>
           <LanguageFloat index={0} activeLanguage={activeLanguage}>
             <Cube 
               key={`cube-${0}-${activeLanguage}`}
               position={[0, 0, 0]}
               topLeftText={cubeTexts[0].topLeftText}
               bottomRightText={cubeTexts[0].bottomRightText}
-              onClick={() => onCubeSelect(0)}
+              onClick={() => {
+                onCubeSelect(0);
+    
+              }}
           
               color="#3d3d3d"
               videoUrl={cubeTexts[0].videoUrl}
@@ -522,7 +519,10 @@ function CubeLayout({ onCubeSelect, activeLanguage,  onAboutClick}) {
               position={[0, 0, 0]}
               topLeftText={cubeTexts[1].topLeftText}
               bottomRightText={cubeTexts[1].bottomRightText}
-              onClick={() => onCubeSelect(1)}
+              onClick={() => {
+                onCubeSelect(1);
+                
+              }}
               color="#3d3d3d"
               videoUrl={cubeTexts[1].videoUrl}
               scale={[1, 1, 1]}
@@ -538,7 +538,10 @@ function CubeLayout({ onCubeSelect, activeLanguage,  onAboutClick}) {
               position={[0, 0, 0]}
               topLeftText={cubeTexts[2].topLeftText}
               bottomRightText={cubeTexts[2].bottomRightText}
-              onClick={() => onCubeSelect(2)}
+              onClick={() => {
+                onCubeSelect(2);
+               
+              }}
              color="#3d3d3d"
               videoUrl={cubeTexts[2].videoUrl}
               scale={[1, 1, 1]}
@@ -616,15 +619,15 @@ function CubeLayout({ onCubeSelect, activeLanguage,  onAboutClick}) {
         </group>
         <group position={[0, CUBE_Y_POSITION, CUBE_SPACING]}>
       
-          <LanguageFloat index={8} activeLanguage={activeLanguage}>
+          <LanguageFloat index={7} activeLanguage={activeLanguage}>
             <Cube 
-              key={`cube-${8}-${activeLanguage}`}
+              key={`cube-${7}-${activeLanguage}`}
               position={[0, 0, 0]}
-              topLeftText={cubeTexts[8].topLeftText}
-              bottomRightText={cubeTexts[8].bottomRightText}
-              onClick={() => onCubeSelect(8)}
+              topLeftText={cubeTexts[7].topLeftText}
+              bottomRightText={cubeTexts[7].bottomRightText}
+              onClick={() => onCubeSelect(7)}
               color={getCubeColor(1)}
-              videoUrl={cubeTexts[8].videoUrl}
+              videoUrl={cubeTexts[7].videoUrl}
               scale={[1, 1, 1]}
               rotation={[0, 0, 0]}
             />
@@ -635,11 +638,11 @@ function CubeLayout({ onCubeSelect, activeLanguage,  onAboutClick}) {
             <Cube 
               key={`cube-${8}-${activeLanguage}`}
               position={[0, 0, 0]}
-              topLeftText={cubeTexts[7].topLeftText}
-              bottomRightText={cubeTexts[7].bottomRightText}
-              onClick={() => onCubeSelect(7)}
+              topLeftText={cubeTexts[8].topLeftText}
+              bottomRightText={cubeTexts[8].bottomRightText}
+              onClick={() => onCubeSelect(8)}
               color={getCubeColor(1)}
-              videoUrl={cubeTexts[7].videoUrl}
+              videoUrl={cubeTexts[8].videoUrl}
               scale={[1, 1, 1]}
               rotation={[0, 0, 0]}
             />
@@ -666,136 +669,57 @@ function CubeLayout({ onCubeSelect, activeLanguage,  onAboutClick}) {
     )
   }
 
-  const cubeToFlyTarget = {
-    4: 'button4',  // Cube index 4 maps to button4 target
-    // Add other mappings as needed
-  };
+  const sections = [
+    { position: [0, 0, 0], lookAt: [0, 0, 0] },
+    { position: [0, -10, 5], lookAt: [0, -10, 0] },
+    { position: [5, -20, 5], lookAt: [0, -20, 0] }
+  ]
 
-
-
-  export default function InteractiveCubesScene({ isMapMode, activeLanguage, cameraControllerRef }) {
+  export default function InteractiveCubesScene({ isMapMode, onCubeClick }) {
 
     const { gl } = useThree();
     const [selectedCube, setSelectedCube] = useState(null);
-    //const [activeLanguage, setActiveLanguage] = useState('en');
+    const [activeLanguage, setActiveLanguage] = useState('de');
     const [initialAnimTrigger, setInitialAnimTrigger] = useState(0);
     const [lightboxOpen, setLightboxOpen] = useState(false);
     const [lightboxContent, setLightboxContent] = useState(null);
     const [lightboxType, setLightboxType] = useState('image');
     const [panelRemoved, setPanelRemoved] = useState(false);
-    const [playingVideo, setPlayingVideo] = useState(null);
     const [videoReadyToShow, setVideoReadyToShow] = useState(false);
+
     const timeoutRef = useRef(null); 
     const videoRefCallback = useRef(null);
     const videoRefForPause = useRef(null);
     const cubeRefs = useRef([]);
-    const [showVideo, setShowVideo] = useState(true); // Add state for video visibility
-    const [videoUrl2, setVideoUrl] = useState('https://youtu.be/WGGgQzQwH54'); // Add default video URL
-    const [isMobile, setIsMobile] = useState(false);
-    const [videoKey, setVideoKey] = useState(0);
-    const [enableVideoAudio, setEnableVideoAudio] = useState(false);
-
-    // Add this useEffect hook inside the component
-    useEffect(() => {
-      const checkIfMobile = () => {
-        setIsMobile(window.innerWidth < 768); // Match the breakpoint used in VideoPlayerPlane
-      };
-      
-      // Initial check
-      checkIfMobile();
-      
-      // Add event listener for window resize
-      window.addEventListener('resize', checkIfMobile);
-      
-      // Cleanup
-      return () => {
-        window.removeEventListener('resize', checkIfMobile);
-      };
-    }, []);
-
-    const parseTextWithTags = (text) => {
-      return text.split(/(<b>.*?<\/b>)/).map((part, index) => {
-        if (part.startsWith('<b>') && part.endsWith('</b>')) {
-          return <strong key={index}>{part.slice(3, -4)}</strong>;
-        }
-        return part;
-      });
-    };
-
+    const scroll = useScroll()
+    const { camera } = useThree()
+    const groupRef = useRef()
     
-    // Dynamic width calculation for editor UI
-    const calculateEditorWidth = () => {
-      const screenWidth = window.innerWidth;
-      if (screenWidth < MOBILE_BREAKPOINT) return '420px';  // Mobile
-      if (screenWidth < TABLET_BREAKPOINT) return '500px'; // Tablet
-      if (screenWidth < DESKTOP_BREAKPOINT) return '550px'; // Large Tablet
-      return '600px';  // Desktop and larger screens
-    };
+    useFrame(() => {
+        if (!isMapMode) return
+        
+        // Vertical scroll effect
+        const yOffset = scroll.offset * 30
+        camera.position.set(0, 15 - yOffset, 3)
+        camera.lookAt(0, 15 - yOffset - 5, 0)
+        
+        if (groupRef.current) {
+          groupRef.current.position.y = yOffset
+        }
+      })
+    
 
 
     const handleCubeSelect = (index) => {
-      console.log('[ICS_C] Cube selected:', index);
-      const videoUrl = cubeTexts[index].videoUrl;
-      console.log('[ICS_C] Video URL:', videoUrl);
-      // Handle cube 4 click - show and replay the video
-      if (index === 4) {
-        console.log('[ICS_C] Cube 4 clicked, showing video');
-        // Force remount the video player with a new key
-        setEnableVideoAudio(true);
-        setVideoKey(prev => prev + 1);
-        setShowVideo(true);
-        return;
-      }
-      
-      if (videoUrl) {
-        console.log('[ICS_C] Opening lightbox for video');
-        openLightbox(videoUrl);
-      } else {
-        const targetKey = cubeToFlyTarget[index];
-        console.log('[ICS_C] Target key:', targetKey);
-        
-        if (targetKey && CAMERA_SETTINGS.FLY_TARGETS[targetKey]) {
-          console.log('[ICS_C] Found fly target:', CAMERA_SETTINGS.FLY_TARGETS[targetKey]);
-          cameraControllerRef.current?.flyToTarget(CAMERA_SETTINGS.FLY_TARGETS[targetKey]);
-        } else {
-          console.log('[ICS_C] No fly target found for cube:', index);
-        }   
-        if (videoUrl) {
-          setPlayingVideo({ index, url: videoUrl }); // Trigger video plane  
-        } else { 
-          const targetKey = cubeToFlyTarget[index];
-          if (targetKey && CAMERA_SETTINGS.FLY_TARGETS[targetKey]) {
-            cameraControllerRef.current?.flyToTarget(CAMERA_SETTINGS.FLY_TARGETS[targetKey]);
-          }
-    
-          setSelectedCube(index); // Show UI panel for non-video cubes
-    
-        }
-      }
-    
-      };
+      setSelectedCube(index);
+      onCubeClick(index);
+      // Lightbox functionality kept but not triggered here
+    };
 
     const handleCloseEditor = () => {
       setSelectedCube(null)
     }
 
-    const handleVideoClose = () => {
-      setPlayingVideo(null);
-    };
-  
-      // Keep only ONE declaration of handleLanguageSwitcheroo inside the component
-      const handleLanguageSwitcheroo = (targetLang) => {
-        if (targetLang) {
-          setActiveLanguage(targetLang); // Direct set if target specified
-        } else {
-          setActiveLanguage(prev => 
-            prev === 'en' ? 'de' : 
-            prev === 'de' ? 'fr' : 
-            'en'
-          );
-        }
-      };
-  
     const handleLanguageSwitch = () => {
       setActiveLanguage(prev => 
         prev === 'en' ? 'de' : 
@@ -811,18 +735,7 @@ const openLightbox = (content, type = 'image') => {
   }
 
  
-  const calculatePanelPosition = (el, camera, size) => {
-    const isMobile = window.innerWidth < MOBILE_BREAKPOINT;
-    const panelWidth = calculateEditorWidth().replace('px', '');
-    
-    if (isMobile) {
-      // For mobile, keep existing logic
-      return [size.width / 2 - 230, 40];
-    } else {
-      // For desktop/tablet, center precisely
-      return [size.width / 2 - panelWidth / 2, 40];
-    }
-  };
+
   
 
   const closeLightbox = () => {
@@ -852,8 +765,6 @@ const openLightbox = (content, type = 'image') => {
     return () => clearTimeout(timer);
   }, []);
 
-
-
   const getCubeTextsForLanguage = (lang) => {
     if (lang === 'de') return germanCubes;
     if (lang === 'fr') return frenchCubes;
@@ -866,55 +777,56 @@ const openLightbox = (content, type = 'image') => {
       <group >
     
           <CubeLayout onCubeSelect={handleCubeSelect} activeLanguage={activeLanguage} />
-          
-        
 
           {/* Editor UI */}
           {(!panelRemoved && selectedCube !== null) && (
             <Html
                 
                 className="html-panel"
-                calculatePosition={calculatePanelPosition}
+                calculatePosition={(el, camera, size) => {
+                const isMobile = window.innerWidth < MOBILE_BREAKPOINT;
+                return [isMobile ? size.width / 2 - 230 : size.width / 2 - 235, 80];
+                }}
                 style={{
-                  width: calculateEditorWidth(),
-                  pointerEvents: lightboxOpen ? 'none' : 'auto',
-                  touchAction: lightboxOpen ? 'none' : 'auto',
-                  zIndex: 1000,
-                  transition: 'opacity 1.5s ease-in-out, width 0.3s ease',
-                  opacity: selectedCube !== null ? 1 : 0
+                width: '420px',
+                pointerEvents: lightboxOpen ? 'none' : 'auto', // Disable interactions when fading
+                touchAction: lightboxOpen ? 'none' : 'auto',
+                zIndex: 1000,
+                transition: 'opacity 1.5s ease-in-out',
+                opacity: selectedCube !== null ? 1 : 0 // Fade out when selectedCube is null
                 }}
             >
  
             <div  
-             style={{
-              position: 'relative',
-              top: '0',
-              left: '50%',
-              transform: 'translate(-50%, 0)',
-              width: '100%',
-              pointerEvents: 'auto',
-              touchAction: 'auto',
-              margin: '0 20px',
-              padding: '20px',
-              zIndex: 1000,
-            }}
+               style={{
+                 position: 'relative',
+                 top: '0',
+                 left: '50%',
+                 transform: 'translate(-50%, 0)',
+                 width: '420px',
+                 pointerEvents: 'auto',
+                 touchAction: 'auto',
+                 margin: '0 20px',
+                 padding: '20px',
+                 zIndex: 1000,
+               }}
              >
                <div 
-             style={{
-              background: '#15171c',
-              padding: '20px',
-              borderRadius: '11px',
-              boxShadow: '0 4px 20px rgba(0,0,0,0.8)',
-              color: '#e0e0e0',
-              width: '100%',
-              maxHeight: '80vh',
-              display: 'flex',
-              fontFamily: 'InterDisplay-ExtraLight, sans-serif',
-              flexDirection: 'column',
-              pointerEvents: 'auto',
-              touchAction: 'auto',
-              zIndex: 1000,
-              WebkitTapHighlightColor: 'transparent',
+                 style={{
+                   background: '#15171c',
+                   padding: '20px',
+                   borderRadius: '11px',
+                   boxShadow: '0 4px 20px rgba(0,0,0,0.8)',
+                   color: '#e0e0e0',
+                   width: '100%',
+                   maxHeight: '80vh',
+                   display: 'flex',
+                   fontFamily: 'InterDisplay-ExtraLight, sans-serif',
+                   flexDirection: 'column',
+                   pointerEvents: 'auto',
+                   touchAction: 'auto',
+                   zIndex: 1000,
+                   WebkitTapHighlightColor: 'transparent',
                  }}
                  onClick={(e) => e.stopPropagation()}
                  onTouchStart={(e) => e.stopPropagation()}
@@ -935,7 +847,7 @@ const openLightbox = (content, type = 'image') => {
                       <div 
                         onClick={handleLanguageSwitch}
                         style={{ 
-                          fontSize: '0.0em', //Made it so small it aint there no more
+                          fontSize: '0.8em', 
                           color: '#fff', 
                           fontFamily: 'InterDisplay-ExtraLight, sans-serif',
                           marginLeft: '100px',
@@ -972,88 +884,37 @@ const openLightbox = (content, type = 'image') => {
                         })}
                       </div>
                     </div>
-                 
+                    <div style={{ fontSize: '1.0em', color: '#aaa', fontFamily: 'InterDisplay-Bold, sans-serif', marginBottom: '22px',}}>
+                        {cubeTexts[selectedCube].bottomRightText}
+                      </div>
                     
                     {/* Text content with perfect paragraph handling */}
                     <div style={{
                       flex: 1,
                       overflowY: 'auto',
-                      paddingRight: '20px',
+                      paddingRight: '8px',
                       whiteSpace: 'pre-line',
                       wordWrap: 'break-word',
                       overflowWrap: 'break-word',
                       fontFamily: 'InterDisplay-ExtraLight, sans-serif',
                       fontSize: '1.3em',
                     }}>
-        {cubeTexts[selectedCube].description.split('\n\n').map((paragraph, i) => {
-    // Check if this cube has a video URL and the paragraph indicates a video
-    if (cubeTexts[selectedCube].videoUrl && paragraph.includes('Opens in a lightbox')) {
-      return (
-        <React.Fragment key={i}>
-          <p style={{ 
-            marginBottom: '1em',
-            lineHeight: '1.4'
-          }}>
-            {paragraph.replace('Opens in a lightbox.', '')}
-          </p>
-          <div style={{
-            width: '100%',
-            marginBottom: '1em',
-            maxHeight: '300px',
-            overflow: 'hidden'
-          }}>
-               <div style={{ fontSize: '1.2em', color: '#aaa', fontFamily: 'InterDisplay-Bold, sans-serif', marginBottom: '22px',}}>
-                        {cubeTexts[selectedCube].bottomRightText}
-                      </div>
-                      {/* Video section - conditionally render if videoUrl exists */}
-                      {cubeTexts[selectedCube].videoUrl && (
-                        <div className="video-container" style={{
-                          width: '100%',
-                          marginBottom: '22px',
-                          maxHeight: '300px', // Adjust as needed
-                          overflow: 'hidden'
+                      {cubeTexts[selectedCube].description.split('\n\n').map((paragraph, i) => (
+                        <p key={i} style={{ 
+                          marginBottom: '1em',
+                          lineHeight: '1.4'
                         }}>
-                          <video 
-                            controls 
-                            playsInline
-                           src={cubeTexts[selectedCube].videoUrl}
-                           onClick={() => openLightbox(cubeTexts[selectedCube].videoUrl)}
-                            style={{
-                              width: '100%',
-                              maxWidth: '100%',
-                              height: 'auto',
-                              objectFit: 'contain'
-                            }}
-                            onTouchStart={(e) => e.stopPropagation()}
-                            onTouchMove={(e) => e.stopPropagation()}
-                            onTouchEnd={(e) => e.stopPropagation()}
-                            onWheel={(e) => e.stopPropagation()} 
-                          />
-                        </div>
-                      )}
-          </div>
-        </React.Fragment>
-      )
-    }
-                
-                // Regular paragraph rendering
-                return (
-                  <p key={i} style={{ 
-                    marginBottom: '1em',
-                    lineHeight: '1.4'
-                  }}>
-                     {parseTextWithTags(paragraph.replace('Opens in a lightbox.', ''))}
-                  </p>
-                )
-              })}
-            </div>
-                              
+                          {paragraph}
+                        </p>
+                      ))}
+                    </div>
+                  
                     {cubeTexts[selectedCube].images && (
                       <button
                         onClick={() => openLightbox(cubeTexts[selectedCube].images, 'image')}
                         style={{
                           width: '100%',
-                          padding: '22px',
+                          padding: '15px',
                           backgroundColor: '#f57500',
                           border: 'none',
                           borderRadius: '11px',
@@ -1084,7 +945,6 @@ const openLightbox = (content, type = 'image') => {
                           setLightboxContent(url);
                           setLightboxType('iframe');
                           setLightboxOpen(true);
-                          setSelectedCube(null);
                         }}
                         style={{
                           width: '100%',
@@ -1185,10 +1045,6 @@ const openLightbox = (content, type = 'image') => {
             zIndex: 999999
           }}
           onClick={(e) => e.stopPropagation()} // Prevent click-through
-          onTouchStart={(e) => e.stopPropagation()}
-          onTouchMove={(e) => e.stopPropagation()}
-          onTouchEnd={(e) => e.stopPropagation()}
-          onWheel={(e) => e.stopPropagation()} 
         >
           <Lightbox 
             content={lightboxContent}
@@ -1198,39 +1054,27 @@ const openLightbox = (content, type = 'image') => {
           />
         </Html>
       )}
-            {/* Video Player Plane - playingVideo (on top) */}
-            {playingVideo && (
-              <group 
-                position={isMobile ? [0, 4.7, 0.1] : [0, 6, 1.5]}  // Slight Z-offset to be on top
-                rotation={isMobile ? [-Math.PI / 2.3, 0, -Math.PI / 2] : [-Math.PI / 2.37, 0, 0]} 
-                scale={isMobile ? [0.8, 0.8, 0.8] : [1, 1, 1]}
-              >
-                <VideoPlayerPlane
-                
-                  position={[0, 0, 0]}
-                  videoUrl2={videoUrl2}
-                  onClose={handleVideoClose}
-                  isPlaying={!!playingVideo}
-                />     
-              </group>
-            )}
-
-            {/* Video Player Plane - showVideo (whitebackground) */}
             {showVideo && (
-              <group 
-                position={isMobile ? [0, 4.7, 0] : [0, 6, 1.5]} 
-                rotation={isMobile ? [-Math.PI / 2.3, 0, -Math.PI / 2] : [-Math.PI / 2.37, 0, 0]} 
-                scale={isMobile ? [0.8, 0.8, 0.8] : [1, 1, 1]}
-              >
-                <VideoPlayerPlane 
-                  key={`video-${videoKey}`}
-                  videoUrl2={videoUrl2}
-                  isPlaying={showVideo}
-                  onClose={handleVideoClose}
-                  resetTrigger={videoKey}
-                />
-              </group>
-            )}
+         <group position={[0, 3, 0]} rotation={[0, 0, 0]} scale={[1, 1, 1]}>
+    <VideoPlayerPlane 
+ 
+      
+      videoUrl={videoUrl2}
+      isPlaying={showVideo}
+      onClose={() => setShowVideo(false)}
+    />
+    </group>
+  )}     
+   {showVideo && (
+    <group position={[0, 3, 0]} rotation={[0, 0, 0]} scale={[1, 1, 1]}>
+        <VideoPlayerPlane 
+        videoUrl={videoUrl2}
+        isPlaying={showVideo}
+        onClose={() => setShowVideo(false)}
+        />
+        </group>
+        )}
+
        
       </group>
     );

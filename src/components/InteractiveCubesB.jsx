@@ -20,7 +20,7 @@ const initialCubeTexts = [
     description: ` A ` },
   { topLeftText: "AFTER EFFECTS", bottomRightText: "2D / 3D MOTION DESIGN", description: `Motion skills`, videoUrl: "https://www.jopl.de/2/video/reel.mp4"  },
   { topLeftText: `CINEMA4D /
-SOFTER`, bottomRightText: "MOTION REEL SHORT", description: `Showreel `, videoUrl: "https://www.jopl.de/2/new/Reel2025_A.mp4#t=0,loop"    },
+SOFTER`, bottomRightText: "MOTION REEL SHORT", description: `Showreel `, videoUrl: "https://www.jopl.de/videos/Reeler_2025_Fader.mp4#t=0,loop"    },
   { topLeftText: `ANIMATION /
 HARDER`, bottomRightText: "MOTION REEL LONG", description: `Showreel showing`, videoUrl: "https://www.jopl.de/2/video/reel.mp4#t=0,loop"  },
   { topLeftText: `WEBGL / WEBXR /
