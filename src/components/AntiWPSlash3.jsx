@@ -49,7 +49,7 @@ const AntiWPSplash = () => {
           }} 
           alt="Logo" 
         />
-      <p>Version 5.82</p>
+      <p>Version 5.83</p>
       <p></p>
       </div>
       <style jsx>{`
